@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:OGCdiExplorer.ViewModels.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="OGCdiExplorer.Controls.MenuBar">
+    
+    <WrapPanel HorizontalAlignment="Left">
+        <StackPanel>
+            <Menu>
+                <MenuItem Header="File">
+                    <MenuItem  Header="Open File" Click="MenuItem_OnClick" />
+                    <MenuItem Header="Menu Item" InputGesture="Ctrl+D" />
+                </MenuItem>
+                <MenuItem Header="Video">
+                    <MenuItem Header="Palette Manager" />
+                </MenuItem>
+                <MenuItem Header="Audio">
+                    <MenuItem Header="Clip Manager" />
+                </MenuItem>
+                <MenuItem Header="Data">
+                    <MenuItem Header="Data Manager" />
+                </MenuItem>
+            </Menu>
+        </StackPanel>
+    </WrapPanel>
+</UserControl>

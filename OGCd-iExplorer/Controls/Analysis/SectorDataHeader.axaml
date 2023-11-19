@@ -1,0 +1,36 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:OGCdiExplorer.Controls.Analysis">
+  <Design.PreviewWith>
+    <controls:SectorDataHeader />
+  </Design.PreviewWith>
+
+  <Style Selector="controls|SectorDataHeader">
+    <!-- Set Defaults -->
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="DarkCyan"
+                BorderBrush="Cyan"
+                BorderThickness="2"
+                Padding="5">
+          <Grid Width="150">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="50" />
+              <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0"
+                       Text="{TemplateBinding SectorType}"
+                       HorizontalAlignment="Center"
+                       Margin="5" />
+
+            <TextBlock Grid.Row="1"
+                       Text="{TemplateBinding SectorCount}"
+                       HorizontalAlignment="Center"
+                       Margin="5" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>

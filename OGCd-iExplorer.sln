@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGCd-iExplorer", "OGCd-iExplorer\OGCd-iExplorer.csproj", "{5E391576-B854-4087-8F60-57BAAAE893B8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E391576-B854-4087-8F60-57BAAAE893B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E391576-B854-4087-8F60-57BAAAE893B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E391576-B854-4087-8F60-57BAAAE893B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E391576-B854-4087-8F60-57BAAAE893B8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="OGCd-iExplorer/App.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
+        <entry key="OGCd-iExplorer/Controls/Analysis/SectorDataHeader.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
+        <entry key="OGCd-iExplorer/Controls/MenuBar.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
+        <entry key="OGCd-iExplorer/Views/MainWindow.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
+        <entry key="OGCd-iExplorer/Views/Overview/OverviewPage.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
+        <entry key="OGCd-iExplorer/Views/Overview/OverviewView.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
+        <entry key="OGCd-iExplorer/Views/Pages/AnalysisView.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
+        <entry key="OGCd-iExplorer/Views/Pages/OverviewView.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
+        <entry key="OGCd-iExplorer/Views/Windows/ImagePreview.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
+      </map>
+    </option>
+  </component>
+</project>
