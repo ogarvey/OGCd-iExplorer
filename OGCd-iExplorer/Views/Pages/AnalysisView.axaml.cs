@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -49,16 +50,41 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
 
     private void MenuItemSave_OnClick(object? sender, RoutedEventArgs e)
     {
+        var sectors = SectorList.SelectedItems.Cast<CdiSector>().ToList();
+        var sectorsToSave = new List<byte[]>();
+        var saveAsType = ((MenuItem)sender).Header.ToString().Replace("Save As ", "");
+        
+        if (sectors.Count > 0)
+        {
+            if (saveAsType != "Save Selected Sectors")
+            {
+                var sectorType = (CdiSectorType)Enum.Parse(typeof(CdiSectorType), saveAsType);
+                foreach (var sector in sectors)
+                {
+                    sectorsToSave.Add(sector.GetSectorData(false, sectorType));
+                }
+                _selectedBytes = sectorsToSave.SelectMany(x => x).ToArray();
+            }
+            else
+            {
+                foreach (var sector in sectors)
+                {
+                    sectorsToSave.Add(sector.GetSectorData());
+                }
+                _selectedBytes = sectorsToSave.SelectMany(x => x).ToArray();
+            }
+                
+        }
         var file = ((AnalysisViewModel)DataContext).SelectedCdiFile.FilePath;
-        var sector = SectorList.SelectedItems[0] as CdiSector;
-        var dataType = sector.SectorTypeString;
-        var commonString = $"{file}_{sector.FileNumber}_{sector.Channel}_";
-        var videoData = $"{sector.Coding.VideoString}_{sector.Coding.ResolutionString}";
-        videoData += sector.Coding.IsOddLines ? "_Odd" : "_Even";
-        videoData += sector.Coding.IsASCF ? "_ASCF" : "";
-        var monoStereo = sector.Coding.IsMono ? "Mono" : "Stereo";
-        var audioData = $"{monoStereo}_{sector.Coding.BitsPerSampleString}bit_{sector.Coding.SampleRateString}";
-        var final = $"{sector.SectorIndex}";
+        var sectorInfo = SectorList.SelectedItems[0] as CdiSector;
+        var dataType = sectorInfo.SectorTypeString;
+        var commonString = $"{file}_{sectorInfo.FileNumber}_{sectorInfo.Channel}_";
+        var videoData = $"{sectorInfo.Coding.VideoString}_{sectorInfo.Coding.ResolutionString}";
+        videoData += sectorInfo.Coding.IsOddLines ? "_Odd" : "_Even";
+        videoData += sectorInfo.Coding.IsASCF ? "_ASCF" : "";
+        var monoStereo = sectorInfo.Coding.IsMono ? "Mono" : "Stereo";
+        var audioData = $"{monoStereo}_{sectorInfo.Coding.BitsPerSampleString}bit_{sectorInfo.Coding.SampleRateString}";
+        var final = $"{sectorInfo.SectorIndex}";
         switch (dataType)
         {
             case "Video":
@@ -119,5 +145,15 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
             _selectedBytes = sectorsToSave.SelectMany(x => x).ToArray();
             ImageService.Instance.PaletteBytes = _selectedBytes;
         }
+    }
+
+    private void UpdateFilter(object? sender, TextChangedEventArgs e)
+    {
+        ((AnalysisViewModel)DataContext).ApplySectorTypeFilters();
+    }
+
+    private void ApplyVideoTypeFilter(object? sender, EventArgs e)
+    {
+        ((AnalysisViewModel)DataContext).ApplySectorTypeFilters();
     }
 }

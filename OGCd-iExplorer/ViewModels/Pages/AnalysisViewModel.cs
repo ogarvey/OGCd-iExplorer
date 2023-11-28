@@ -19,9 +19,6 @@ public class AnalysisViewModel : PageViewModel
         SelectedCdiFile = CdiFileService.Instance.CdiFile;
         FilteredItems = new ObservableCollection<CdiSector>(SelectedCdiFile.Sectors);
         Sectors = new ObservableCollection<CdiSector>(SelectedCdiFile.Sectors);
-        _filterAudio = false;
-        _filterVideo = false;
-        _filterData = false;
         
         ShowDialog = new Interaction<ImagePreviewViewModel, bool?>();
 
@@ -55,21 +52,21 @@ public class AnalysisViewModel : PageViewModel
         set => this.RaiseAndSetIfChanged(ref _filteredItems, value);
     }
     
-    private bool _filterAudio;
+    private bool _filterAudio = false;
     public bool FilterAudio
     {
         get => _filterAudio;
         set => this.RaiseAndSetIfChanged(ref _filterAudio, value);
     }
 
-    private bool _filterVideo;
+    private bool _filterVideo = false;
     public bool FilterVideo
     {
         get => _filterVideo;
         set => this.RaiseAndSetIfChanged(ref _filterVideo, value);
     }
 
-    private bool _filterData;
+    private bool _filterData = false;
     private CdiVideoType _videoType;
     public CdiVideoType VideoType
     {
@@ -81,13 +78,31 @@ public class AnalysisViewModel : PageViewModel
         get => _filterData;
         set => this.RaiseAndSetIfChanged(ref _filterData, value);
     }
+
+    private int _filterChannel = -1;
+    public int FilterChannel
+    {
+        get => _filterChannel;
+        set => this.RaiseAndSetIfChanged(ref _filterChannel, value);
+    }
+    
+    private int _filterVideoType = -1;
+    public int FilterVideoType
+    {
+        get => _filterVideoType;
+        set => this.RaiseAndSetIfChanged(ref _filterVideoType, value);
+    }
+    
     public void ApplySectorTypeFilters()
     {
         var filtered = _sectors?.Where(item =>
-            (!FilterAudio && item.SectorTypeString == "Audio") ||
-            (!FilterVideo && item.SectorTypeString == "Video") ||
-            (!FilterData && item.SectorTypeString == "Data")).OrderBy(s => s.SectorIndex).ToList();
-
+            (!FilterAudio || item.SectorTypeString == "Audio") ||
+            (!FilterVideo || item.SectorTypeString == "Video") ||
+            (!FilterData || item.SectorTypeString == "Data")).OrderBy(s => s.SectorIndex).ToList();
+        
+        filtered = filtered?.Where(item => (FilterChannel != -1 && item.Channel == FilterChannel) || (FilterChannel == -1)).ToList();
+        filtered = filtered?.Where(item => (FilterVideoType != -1 && item.Coding.Coding == FilterVideoType) || (FilterVideoType == -1)).ToList();
+        
         if (filtered != null) FilteredItems = new ObservableCollection<CdiSector>(filtered);
     }
     

@@ -36,17 +36,42 @@
         </Grid>
       </Grid>
     </Grid>
-    <Grid Grid.Row="2">
-          <DataGrid x:Name="SectorList"
-                    ItemsSource="{Binding FilteredItems, Mode=OneWay}"
-                    IsReadOnly="True"
-                    GridLinesVisibility="All" 
-                    HorizontalGridLinesBrush="Cyan"
-                    MaxHeight="800"
-                    BorderThickness="1" BorderBrush="Gray">
+    <Grid Grid.Row="2" RowDefinitions="*,Auto">
+      <Grid Grid.Row="0" ColumnDefinitions="*,*">
+         <StackPanel Grid.Column="0">
+           <TextBlock Margin="0 5" >Channel:</TextBlock>
+           <TextBox Text="{Binding FilterChannel}" TextChanged="UpdateFilter" />
+         </StackPanel>
+        <StackPanel Grid.Column="1">
+          <TextBlock Margin="0 5" >Video Type:</TextBlock>
+          <ComboBox SelectedIndex="{Binding FilterVideoType}" DropDownClosed="ApplyVideoTypeFilter" MaxDropDownHeight="100">
+            <ComboBoxItem>CLUT4</ComboBoxItem>
+            <ComboBoxItem>CLUT7</ComboBoxItem>
+            <ComboBoxItem>CLUT8</ComboBoxItem>
+            <ComboBoxItem>RL3</ComboBoxItem>
+            <ComboBoxItem>RL7</ComboBoxItem>
+            <ComboBoxItem>DYUV</ComboBoxItem>
+            <ComboBoxItem>RGB555 (lower)</ComboBoxItem>
+            <ComboBoxItem>RGB555 (upper)</ComboBoxItem>
+            <ComboBoxItem>QHY</ComboBoxItem>
+          </ComboBox>
+        </StackPanel>
+      </Grid>
+      <DataGrid Grid.Row="1" x:Name="SectorList"
+                ItemsSource="{Binding FilteredItems, Mode=OneWay}"
+                IsReadOnly="True"
+                GridLinesVisibility="All" 
+                HorizontalGridLinesBrush="Cyan"
+                MaxHeight="800"
+                BorderThickness="1" BorderBrush="Gray">
             <DataGrid.ContextFlyout>
               <MenuFlyout>
-                <MenuItem Header="Save Sectors" Click="MenuItemSave_OnClick" />
+                <MenuItem Header="Save Sectors">
+                  <MenuItem Header="Save Selected Sectors" Click="MenuItemSave_OnClick" />
+                  <MenuItem Header="Save As Audio" Click="MenuItemSave_OnClick" /> 
+                  <MenuItem Header="Save As Video" Click="MenuItemSave_OnClick" />
+                  <MenuItem Header="Save As Data" Click="MenuItemSave_OnClick" />
+                </MenuItem>
                 <MenuItem Header="Select As Image" Click="MenuItemImage_OnClick" />
                 <MenuItem Header="Select As Palette" Click="MenuItemPalette_OnClick" />
               </MenuFlyout>
@@ -67,6 +92,8 @@
               <DataGridCheckBoxColumn Header="Is ASCF" Binding="{Binding Coding.IsASCF}"/>
               <DataGridTextColumn Header="Video Type" Binding="{Binding Coding.VideoString}" />
               <DataGridTextColumn Header="Video Resolution" Binding="{Binding Coding.ResolutionString}" />
+              <DataGridTextColumn Header="BPS" Binding="{Binding Coding.BitsPerSampleString}"/>
+              <DataGridTextColumn Header="Sample Rate" Binding="{Binding Coding.SampleRateString}"/>
               <DataGridCheckBoxColumn Header="Is Form 2" Binding="{Binding SubMode.IsForm2}"/>
               <DataGridCheckBoxColumn Header="Is Trigger" Binding="{Binding SubMode.IsTrigger}"/>
               <DataGridCheckBoxColumn Header="Is RTF" Binding="{Binding SubMode.IsRTF}"/>
