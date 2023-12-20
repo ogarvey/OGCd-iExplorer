@@ -6,6 +6,7 @@
         <entry key="OGCd-iExplorer/App.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
         <entry key="OGCd-iExplorer/Controls/Analysis/SectorDataHeader.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
         <entry key="OGCd-iExplorer/Controls/MenuBar.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
+        <entry key="OGCd-iExplorer/Views/HexView.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
         <entry key="OGCd-iExplorer/Views/MainWindow.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
         <entry key="OGCd-iExplorer/Views/Overview/OverviewPage.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
         <entry key="OGCd-iExplorer/Views/Overview/OverviewView.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />

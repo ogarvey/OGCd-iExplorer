@@ -23,13 +23,6 @@ public class TitleManagementViewModel: PageViewModel
         set => this.RaiseAndSetIfChanged(ref _titles, value);
     } 
     
-    private CdiTitle? _selectedTitle;
-    public CdiTitle SelectedTitle
-    {
-        get => _selectedTitle;
-        set => this.RaiseAndSetIfChanged(ref _selectedTitle, value);
-    }
-    
     private bool _isNewTitle = false;
     public bool IsNewTitle
     {
@@ -55,16 +48,11 @@ public class TitleManagementViewModel: PageViewModel
 
     public bool ShowTitleDetail => IsTitleSelected || IsNewTitle;
     
-    private CdiTitle _newTitle = new CdiTitle();
+    private CdiTitle _titleDetail = new CdiTitle();
 
-    public CdiTitle NewTitle
+    public CdiTitle TitleDetail
     {
-        get => _newTitle;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _newTitle, value);
-        }
+        get => _titleDetail;
+        set => this.RaiseAndSetIfChanged(ref _titleDetail, value);
     }
-
-
 }

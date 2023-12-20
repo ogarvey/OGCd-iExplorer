@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:analysis="clr-namespace:OGCdiExplorer.Controls.Analysis"
+             xmlns:views="clr-namespace:OGCdiExplorer.Views"
              xmlns:vm="clr-namespace:OGCdiExplorer.ViewModels.Pages"
              xmlns:dialog="using:OGCdiExplorer.Services"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -14,37 +15,44 @@
       <TextBlock Padding="10" Text="{Binding SelectedCdiFile.FilePath}"></TextBlock>
     </Panel>
     <Grid Grid.Row="1" ColumnDefinitions="1*,1*,1*,3*">
-      
-        <analysis:SectorDataHeader Grid.Column="0" x:Name="VidInfo"
-                                   SectorCount="{Binding SelectedCdiFile.VideoSectorCount, FallbackValue=0}"
-                                   SectorType="Video" />
-        <analysis:SectorDataHeader Grid.Column="1" x:Name="AudInfo"
-                                   SectorCount="{Binding SelectedCdiFile.AudioSectorCount, FallbackValue=0}"
-                                   SectorType="Audio" />
-        <analysis:SectorDataHeader Grid.Column="2" x:Name="DatInfo"
-                                   SectorCount="{Binding SelectedCdiFile.DataSectorCount, FallbackValue=0}"
-                                    SectorType="Data" />
-                    
+
+      <analysis:SectorDataHeader Grid.Column="0" x:Name="VidInfo"
+                                 SectorCount="{Binding SelectedCdiFile.VideoSectorCount, FallbackValue=0}"
+                                 SectorType="Video" />
+      <analysis:SectorDataHeader Grid.Column="1" x:Name="AudInfo"
+                                 SectorCount="{Binding SelectedCdiFile.AudioSectorCount, FallbackValue=0}"
+                                 SectorType="Audio" />
+      <analysis:SectorDataHeader Grid.Column="2" x:Name="DatInfo"
+                                 SectorCount="{Binding SelectedCdiFile.DataSectorCount, FallbackValue=0}"
+                                 SectorType="Data" />
+
       <Grid Grid.Column="3" ColumnDefinitions="1*,1*,1*,1*,1*" RowDefinitions="1*,1*">
-        <Panel Grid.Row="0" Grid.Column="0"><CheckBox IsChecked="{Binding FilterVideo, Mode=TwoWay}" IsCheckedChanged="ToggleButton_OnIsCheckedChanged">Video</CheckBox></Panel>
+        <Panel Grid.Row="0" Grid.Column="0">
+          <CheckBox IsChecked="{Binding FilterVideo, Mode=TwoWay}" IsCheckedChanged="ToggleButton_OnIsCheckedChanged">Video</CheckBox>
+        </Panel>
         <Separator Grid.Row="0" Grid.Column="1"></Separator>
-        <Panel Grid.Row="0" Grid.Column="2"><CheckBox IsChecked="{Binding FilterAudio, Mode=TwoWay}" IsCheckedChanged="ToggleButton_OnIsCheckedChanged">Audio</CheckBox></Panel>
+        <Panel Grid.Row="0" Grid.Column="2">
+          <CheckBox IsChecked="{Binding FilterAudio, Mode=TwoWay}" IsCheckedChanged="ToggleButton_OnIsCheckedChanged">Audio</CheckBox>
+        </Panel>
         <Separator Grid.Row="0" Grid.Column="3"></Separator>
-        <Panel Grid.Row="0" Grid.Column="4"><CheckBox IsChecked="{Binding FilterData, Mode=TwoWay}" IsCheckedChanged="ToggleButton_OnIsCheckedChanged">Data</CheckBox></Panel>
+        <Panel Grid.Row="0" Grid.Column="4">
+          <CheckBox IsChecked="{Binding FilterData, Mode=TwoWay}" IsCheckedChanged="ToggleButton_OnIsCheckedChanged">Data</CheckBox>
+        </Panel>
         <Grid Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="1">
-          <Button Content="Preview Selected Sectors as Image" Command="{Binding ImagePreviewCommand}"/>
+          <Button Content="Preview Selected Sectors as Image" Command="{Binding ImagePreviewCommand}" />
         </Grid>
       </Grid>
     </Grid>
-    <Grid Grid.Row="2" RowDefinitions="*,Auto">
-      <Grid Grid.Row="0" ColumnDefinitions="*,*">
-         <StackPanel Grid.Column="0">
-           <TextBlock Margin="0 5" >Channel:</TextBlock>
-           <TextBox Text="{Binding FilterChannel}" TextChanged="UpdateFilter" />
-         </StackPanel>
+    <Grid Grid.Row="2" RowDefinitions="*,Auto" ColumnDefinitions="*,4,*">
+      <Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="*,*">
+        <StackPanel Grid.Column="0">
+          <TextBlock Margin="0 5">Channel:</TextBlock>
+          <TextBox Text="{Binding FilterChannel}" TextChanged="UpdateFilter" />
+        </StackPanel>
         <StackPanel Grid.Column="1">
-          <TextBlock Margin="0 5" >Video Type:</TextBlock>
-          <ComboBox SelectedIndex="{Binding FilterVideoType}" DropDownClosed="ApplyVideoTypeFilter" MaxDropDownHeight="100">
+          <TextBlock Margin="0 5">Video Type:</TextBlock>
+          <ComboBox SelectedIndex="{Binding FilterVideoType}" DropDownClosed="ApplyVideoTypeFilter"
+                    MaxDropDownHeight="100">
             <ComboBoxItem>CLUT4</ComboBoxItem>
             <ComboBoxItem>CLUT7</ComboBoxItem>
             <ComboBoxItem>CLUT8</ComboBoxItem>
@@ -57,48 +65,52 @@
           </ComboBox>
         </StackPanel>
       </Grid>
-      <DataGrid Grid.Row="1" x:Name="SectorList"
+      <DataGrid Grid.Column="0" Grid.Row="1" x:Name="SectorList"
                 ItemsSource="{Binding FilteredItems, Mode=OneWay}"
                 IsReadOnly="True"
-                GridLinesVisibility="All" 
+                GridLinesVisibility="All"
                 HorizontalGridLinesBrush="Cyan"
                 MaxHeight="800"
                 BorderThickness="1" BorderBrush="Gray">
-            <DataGrid.ContextFlyout>
-              <MenuFlyout>
-                <MenuItem Header="Save Sectors">
-                  <MenuItem Header="Save Selected Sectors" Click="MenuItemSave_OnClick" />
-                  <MenuItem Header="Save As Audio" Click="MenuItemSave_OnClick" /> 
-                  <MenuItem Header="Save As Video" Click="MenuItemSave_OnClick" />
-                  <MenuItem Header="Save As Data" Click="MenuItemSave_OnClick" />
-                </MenuItem>
-                <MenuItem Header="Select As Image" Click="MenuItemImage_OnClick" />
-                <MenuItem Header="Select As Palette" Click="MenuItemPalette_OnClick" />
-              </MenuFlyout>
-            </DataGrid.ContextFlyout>
-            <DataGrid.Styles>
-              <Style Selector="DataGridColumnHeader">
-                <Setter Property="Foreground" Value="DarkCyan"/>
-                <Setter Property="Background" Value="Cyan"/>
-              </Style>
-            </DataGrid.Styles>
-            <DataGrid.Columns>
-              <DataGridTextColumn Header="Index"  Binding="{Binding SectorIndex}" />
-              <DataGridTextColumn Header="Sector Type" Binding="{Binding SectorTypeString}" />
-              <DataGridTextColumn Header="File #" Binding="{Binding FileNumber}" />
-              <DataGridTextColumn Header="Channel" Binding="{Binding Channel}" />
-              <DataGridCheckBoxColumn Header="Is EOR" Binding="{Binding SubMode.IsEOR}"/>
-              <DataGridCheckBoxColumn Header="Is EOF" Binding="{Binding SubMode.IsEOF}"/>
-              <DataGridCheckBoxColumn Header="Is ASCF" Binding="{Binding Coding.IsASCF}"/>
-              <DataGridTextColumn Header="Video Type" Binding="{Binding Coding.VideoString}" />
-              <DataGridTextColumn Header="Video Resolution" Binding="{Binding Coding.ResolutionString}" />
-              <DataGridTextColumn Header="BPS" Binding="{Binding Coding.BitsPerSampleString}"/>
-              <DataGridTextColumn Header="Sample Rate" Binding="{Binding Coding.SampleRateString}"/>
-              <DataGridCheckBoxColumn Header="Is Form 2" Binding="{Binding SubMode.IsForm2}"/>
-              <DataGridCheckBoxColumn Header="Is Trigger" Binding="{Binding SubMode.IsTrigger}"/>
-              <DataGridCheckBoxColumn Header="Is RTF" Binding="{Binding SubMode.IsRTF}"/>
-            </DataGrid.Columns>
-          </DataGrid>
-        </Grid>
+        <DataGrid.ContextFlyout>
+          <MenuFlyout>
+            <MenuItem Header="Save Sectors">
+              <MenuItem Header="Save Selected Sectors" Click="MenuItemSave_OnClick" />
+              <MenuItem Header="Save As Audio" Click="MenuItemSave_OnClick" />
+              <MenuItem Header="Save As Video" Click="MenuItemSave_OnClick" />
+              <MenuItem Header="Save As Data" Click="MenuItemSave_OnClick" />
+            </MenuItem>
+            <MenuItem Header="Select As Image" Click="MenuItemImage_OnClick" />
+            <MenuItem Header="Select As Palette" Click="MenuItemPalette_OnClick" />
+          </MenuFlyout>
+        </DataGrid.ContextFlyout>
+        <DataGrid.Styles>
+          <Style Selector="DataGridColumnHeader">
+            <Setter Property="Foreground" Value="DarkCyan" />
+            <Setter Property="Background" Value="Cyan" />
+          </Style>
+        </DataGrid.Styles>
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Index" Binding="{Binding SectorIndex}" />
+          <DataGridTextColumn Header="Sector Type" Binding="{Binding SectorTypeString}" />
+          <DataGridTextColumn Header="File #" Binding="{Binding FileNumber}" />
+          <DataGridTextColumn Header="Channel" Binding="{Binding Channel}" />
+          <DataGridCheckBoxColumn Header="Is EOR" Binding="{Binding SubMode.IsEOR}" />
+          <DataGridCheckBoxColumn Header="Is EOF" Binding="{Binding SubMode.IsEOF}" />
+          <DataGridCheckBoxColumn Header="Is ASCF" Binding="{Binding Coding.IsASCF}" />
+          <DataGridTextColumn Header="Video Type" Binding="{Binding Coding.VideoString}" />
+          <DataGridTextColumn Header="Video Resolution" Binding="{Binding Coding.ResolutionString}" />
+          <DataGridTextColumn Header="BPS" Binding="{Binding Coding.BitsPerSampleString}" />
+          <DataGridTextColumn Header="Sample Rate" Binding="{Binding Coding.SampleRateString}" />
+          <DataGridCheckBoxColumn Header="Is Form 2" Binding="{Binding SubMode.IsForm2}" />
+          <DataGridCheckBoxColumn Header="Is Trigger" Binding="{Binding SubMode.IsTrigger}" />
+          <DataGridCheckBoxColumn Header="Is RTF" Binding="{Binding SubMode.IsRTF}" />
+        </DataGrid.Columns>
+      </DataGrid>
+      <GridSplitter Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Background="Black" ResizeDirection="Columns"/>
+      <Panel Grid.Row="0" Grid.RowSpan="2" Grid.Column="2">
+        <views:HexView/>
+      </Panel>
+    </Grid>
   </Grid>
 </UserControl>

@@ -27,22 +27,22 @@
         <Grid Margin="0,10"  IsVisible="{Binding ShowTitleDetail}" ColumnDefinitions="1*,1*" RowDefinitions="1*,1*,1*">
           <WrapPanel Margin="0,5" Grid.Column="0" Grid.Row="0" >
             <Label Content="Title Name" />
-            <TextBox Text="{Binding NewTitle.Title}"/>
+            <TextBox Text="{Binding TitleDetail.Title}"/>
           </WrapPanel>
           <WrapPanel Margin="0,5" Grid.Column="1" Grid.Row="0" >
             <Label Content="Release Date" />
-            <TextBox Margin="10,0" Text="{Binding NewTitle.ReleaseYear}"/>
+            <TextBox Margin="10,0" Text="{Binding TitleDetail.ReleaseYear}"/>
           </WrapPanel>
           <WrapPanel Margin="0,5" Grid.Column="0" Grid.Row="1" >
             <Label Content="Base Path" />
-            <TextBox Margin="10,0" Text="{Binding NewTitle.BasePath}"/>
+            <TextBox Margin="10,0" Text="{Binding TitleDetail.BasePath}"/>
           </WrapPanel>
           <WrapPanel Margin="0,5" Grid.Column="1" Grid.Row="1" >
             <Label Content="Publisher" />
-            <TextBox Margin="10,0" Text="{Binding NewTitle.Publisher}"/></WrapPanel>
+            <TextBox Margin="10,0" Text="{Binding TitleDetail.Publisher}"/></WrapPanel>
           <WrapPanel Margin="0,5" Grid.Column="0" Grid.Row="2" >
             <Label Content="Developed By" />
-            <TextBox Margin="10,0" Text="{Binding NewTitle.DevelopmentCompany}"/></WrapPanel>
+            <TextBox Margin="10,0" Text="{Binding TitleDetail.DevelopmentCompany}"/></WrapPanel>
           <WrapPanel Margin="0,5" Grid.Column="1" Grid.Row="2" >
             <Button Content="Save" Click="AddTitleCommand"/>
           </WrapPanel>
