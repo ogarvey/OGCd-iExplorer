@@ -17,3 +17,16 @@ The below is what you will see after opening, and then analysing the file in the
 You can then select the sectors you are interested in (the options will be expanded, atm both image/palette set the selected sectors as those to export), right click for the menu to select the type of data, and then once again for the option to save the sectors to a file on disk
 
 ![Screenshot showing context menu](https://github.com/ogarvey/OGCd-iExplorer/assets/994386/23e2a9ae-cd2b-4e2e-bc98-bf7f4b14f367)
+
+## HexView example
+
+Small video showing the preview of selected sectors in a Hex View.
+
+![Video showing Hex View](https://github.com/ogarvey/OGCd-iExplorer/assets/994386/f6ab44a9-370b-487b-8d9f-e9a307a67b46)
+
+## Palette Preview example
+
+Small video showing the preview of a selected sector as a palette. 
+
+![Video showing Palette Preview](https://github.com/ogarvey/OGCd-iExplorer/assets/994386/396d6bbb-fd9e-4411-9f06-ea9247d31ec2_
+
