@@ -1,7 +1,7 @@
 # OGCd-iExplorer - W.I.P
 An App for exploring CD-i files, and interacting with the various data types within. Built as a way to learn Avalonia, and also determine useful functionality for OGLibCD-i
 
-Uses OGLibCD-i to gather and display info, and then interact with files that have been extracted from CD-i discs/images.
+Uses OGLibCD-i to gather and display info, and then interact with files that have been extracted from CD-i discs/images using the IsoBuster application.
 
 So far, you can load an extracted file, hit the Analyse button and get a breakdown of the number of Audio, Video and Data Sectors in the file. You will also see a grid containing a list of all sectors, these sectors can be selected in any order or number as required, and then exported to their own file for further analysis.
 
