@@ -22,11 +22,11 @@ You can then select the sectors you are interested in (the options will be expan
 
 Small video showing the preview of selected sectors in a Hex View.
 
-![Video showing Hex View](https://github.com/ogarvey/OGCd-iExplorer/assets/994386/f6ab44a9-370b-487b-8d9f-e9a307a67b46)
+https://github.com/ogarvey/OGCd-iExplorer/assets/994386/f6ab44a9-370b-487b-8d9f-e9a307a67b46
 
 ## Palette Preview example
 
 Small video showing the preview of a selected sector as a palette. 
 
-![Video showing Palette Preview](https://github.com/ogarvey/OGCd-iExplorer/assets/994386/396d6bbb-fd9e-4411-9f06-ea9247d31ec2_
+https://github.com/ogarvey/OGCd-iExplorer/assets/994386/396d6bbb-fd9e-4411-9f06-ea9247d31ec2
 
