@@ -24,7 +24,7 @@ public class ImagePreviewViewModel : PageViewModel
 
     public ImagePreviewViewModel(CdiVideoType videoType)
     {
-        cdiVideoType = ImageService.Instance.VideoType;
+        cdiVideoType = videoType;
         SetPalette(null, null);
         SetImage(null, null);
         ImageService.Instance.PaletteBytesChanged += SetPalette;

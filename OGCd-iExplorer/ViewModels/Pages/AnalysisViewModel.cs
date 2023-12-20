@@ -14,6 +14,9 @@ namespace OGCdiExplorer.ViewModels.Pages;
 
 public class AnalysisViewModel : PageViewModel
 {
+    public override bool CanNavigateNext { get; protected set; }
+    public override bool CanNavigatePrevious { get; protected set; }
+    
     public AnalysisViewModel()
     {
         SelectedCdiFile = CdiFileService.Instance.CdiFile;
@@ -37,10 +40,8 @@ public class AnalysisViewModel : PageViewModel
     
     private ObservableCollection<CdiSector>? _sectors;
 
-    public override bool CanNavigateNext { get; protected set; }
-    public override bool CanNavigatePrevious { get; protected set; }
-
-    public ObservableCollection<CdiSector>? Sectors { get => _sectors;
+    public ObservableCollection<CdiSector>? Sectors { 
+        get => _sectors;
         set => this.RaiseAndSetIfChanged(ref _sectors, value);
     } 
     

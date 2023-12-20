@@ -13,6 +13,7 @@
 
     <ItemGroup>
         <AvaloniaResource Include="Assets\**"/>
+        <AvaloniaResource Remove="obj\**" />
     </ItemGroup>
 
 
@@ -27,6 +28,13 @@
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.5" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
         <PackageReference Include="FluentAvaloniaUI" Version="2.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.25" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.25">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.25" />
+        <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
     </ItemGroup>
 
 
@@ -34,5 +42,35 @@
       <Reference Include="OGLibCD-i">
         <HintPath>..\..\..\..\..\Dev\Projects\Gaming\CD-i\CD-i Image Parser\OGLibCD-i\bin\Debug\net6.0\OGLibCD-i.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Folder Include="Adapters\" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <AvaloniaXaml Remove="obj\**" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Compile Remove="obj\**" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <EmbeddedResource Remove="obj\**" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <AdditionalFiles Remove="obj\**" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <None Remove="obj\**" />
     </ItemGroup>
 </Project>

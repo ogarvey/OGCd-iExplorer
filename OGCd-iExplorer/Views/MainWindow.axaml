@@ -32,7 +32,7 @@
             <StackPanel IsVisible="{Binding IsCdiFileLoaded}">
                 <WrapPanel>
                     <Button Command="{Binding ViewCdiFile}" Content="Analysis" />
-                    <Button Content="Palette Manager" />
+                    <Button Command="{Binding ViewPaletteManagement}" Content="Palette Manager" />
                 </WrapPanel>
                 <TransitioningContentControl Content="{Binding CurrentPage}" />
             </StackPanel>

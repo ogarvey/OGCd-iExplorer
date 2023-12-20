@@ -1,0 +1,63 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:OGCdiExplorer.ViewModels.Pages"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="OGCdiExplorer.Views.Pages.PaletteManagementView"
+             x:DataType="vm:PaletteManagementViewModel">
+    <Grid RowDefinitions="Auto">
+        <StackPanel>
+            <TextBlock Text="Palette Management" FontSize="20" Margin="10,5"/>
+            <WrapPanel Margin="5">
+                <Panel Margin="5">
+                    <Button Content="Load Palette File" Click="LoadPalette_OnClick"></Button>
+                </Panel>
+                <Panel Margin="5">
+                    <Button Content="Parse Palette" Click="ParsePalette_OnClick"></Button>
+                </Panel>
+                <Panel Margin="5">
+                    <Button Content="Parse Stored Sectors" Click="ParseSectorsPalette_OnClick"></Button>
+                </Panel>
+                <Panel Margin="5">
+                    <Button Content="Save Palette"></Button>
+                </Panel>
+            </WrapPanel>
+            <StackPanel Margin="10,5">
+                <Label Content="Palette Type"/>
+                <WrapPanel Margin="5,0">
+                    <RadioButton GroupName="PaletteType"
+                                 Content="RGB"
+                                 IsChecked="True"
+                                 Name="RadPalRgb"/>
+                    <RadioButton GroupName="PaletteType"
+                                 Content="Indexed"
+                                 Name="RadPalIndexed"/>
+                    <RadioButton GroupName="PaletteType"
+                                 Content="CLUT Banks"
+                                 Name="RadPalClut"/>
+                </WrapPanel>
+            </StackPanel>
+            <WrapPanel Margin="10,5">
+                <WrapPanel>
+                    <Label Content="Palette Offset"/>
+                    <NumericUpDown Value="{Binding PaletteOffset}" Margin="5,0"/>
+                </WrapPanel>
+                <WrapPanel>
+                    <Label Margin="5,0" Content="Palette Length"/>
+                    <NumericUpDown Value="{Binding PaletteLength}"/>
+                </WrapPanel>
+            </WrapPanel>
+            <TextBlock Text="Palettes" FontSize="16" Margin="10"/>
+            <ListBox Margin="10">
+                <ListBoxItem>
+                        <TextBlock Text="Example"/>
+                </ListBoxItem>
+            </ListBox>
+            <StackPanel>
+                <TextBlock Text="Palette Preview" FontSize="16" Margin="10"/>
+                <Image Name="ImgPalettePreview" Height="512" Width="512"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -39,7 +39,6 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
     {
         var dialog = new ImagePreview();
         dialog.DataContext = interaction.Input;
-        (dialog.DataContext as ImagePreviewViewModel).cdiVideoType = _videoType;
         dialog.Show((Window)TopLevel.GetTopLevel(this));
     }
 
@@ -126,9 +125,9 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
             }
             _selectedBytes = sectorsToSave.SelectMany(x => x).ToArray();
             ImageService.Instance.ImageBytes = _selectedBytes;
-            _videoType = (CdiVideoType)sectors[0].Coding.Coding;
             ImageService.Instance.VideoType = _videoType;
             _videoType = (CdiVideoType)sectors[0].Coding.Coding;
+            ((AnalysisViewModel)DataContext).VideoType = _videoType;
         }
     }
 
@@ -149,7 +148,7 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
 
     private void UpdateFilter(object? sender, TextChangedEventArgs e)
     {
-        ((AnalysisViewModel)DataContext).ApplySectorTypeFilters();
+        ((AnalysisViewModel)DataContext)?.ApplySectorTypeFilters();
     }
 
     private void ApplyVideoTypeFilter(object? sender, EventArgs e)
