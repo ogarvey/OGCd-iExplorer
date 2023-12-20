@@ -15,7 +15,7 @@ public class CdiContext :DbContext
     {
         var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
-        DbPath = System.IO.Path.Join(path, "og-cdi-explorer.db");
+        DbPath = System.IO.Path.Join(path, "og-cdi-explorer-new.db");
     }
 
     // The following configures EF to create a Sqlite database file in the

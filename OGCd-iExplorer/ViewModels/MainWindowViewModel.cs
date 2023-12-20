@@ -27,6 +27,20 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    public void ViewTitleManagement()
+    { 
+        if (_previousPage is TitleManagementViewModel)
+        {
+            (PreviousPage, CurrentPage) = (CurrentPage, PreviousPage);
+        }
+        else
+        {
+            PreviousPage = CurrentPage;
+            CurrentPage =
+                new TitleManagementViewModel();
+        }
+    }
+
     public void ViewPaletteManagement()
     { 
         if (_previousPage is PaletteManagementViewModel)

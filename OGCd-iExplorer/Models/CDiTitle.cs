@@ -7,7 +7,7 @@ public class CdiTitle
 {
     public int Id { get; set; }
     public string Title { get; set; }
-    public DateOnly ReleaseDate { get; set; }
+    public string ReleaseYear { get; set; }
     public string BasePath { get; set; }
     public string Publisher { get; set; }
     public string DevelopmentCompany { get; set; }

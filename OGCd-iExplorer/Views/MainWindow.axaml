@@ -32,7 +32,7 @@
             <StackPanel>
                 <WrapPanel Margin="10,5">
                     <Button IsEnabled="{Binding IsCdiFileLoaded}" Command="{Binding ViewCdiFile}" Content="Analysis" />
-                    <Button Margin="10,0,0,0" Command="{Binding ViewPaletteManagement}" Content="Title Manager" />
+                    <Button Margin="10,0,0,0" Command="{Binding ViewTitleManagement}" Content="Title Manager" />
                     <Button Margin="10,0,0,0" Command="{Binding ViewPaletteManagement}" Content="Palette Manager" />
                 </WrapPanel>
                 <TransitioningContentControl Content="{Binding CurrentPage}" />
