@@ -30,8 +30,10 @@ public partial class HexView : UserControl
 
     private void OpenFile(FileStream stream, string path)
     {
+        var bytes = new byte[stream.Length];
+        stream.Read(bytes, 0, bytes.Length);
         _lineReader1?.Dispose();
-        _lineReader1 = new MemoryMappedLineReader(stream);
+        _lineReader1 = new MemoryMappedLineReader(bytes);
         _hexFormatter1 = new HexFormatter(stream.Length);
         HexViewControl1.LineReader = _lineReader1;
         HexViewControl1.HexFormatter = _hexFormatter1;

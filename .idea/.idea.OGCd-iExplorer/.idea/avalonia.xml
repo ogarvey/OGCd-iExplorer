@@ -11,6 +11,7 @@
         <entry key="OGCd-iExplorer/Views/Overview/OverviewPage.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
         <entry key="OGCd-iExplorer/Views/Overview/OverviewView.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
         <entry key="OGCd-iExplorer/Views/Pages/AnalysisView.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
+        <entry key="OGCd-iExplorer/Views/Pages/ImagePreview.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
         <entry key="OGCd-iExplorer/Views/Pages/OverviewView.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
         <entry key="OGCd-iExplorer/Views/Pages/PaletteManagementView.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />
         <entry key="OGCd-iExplorer/Views/Pages/TitleManagementView.axaml" value="OGCd-iExplorer/OGCd-iExplorer.csproj" />

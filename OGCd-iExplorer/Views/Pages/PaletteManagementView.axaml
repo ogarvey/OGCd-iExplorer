@@ -29,23 +29,26 @@
                     <RadioButton GroupName="PaletteType"
                                  Content="RGB"
                                  IsChecked="True"
+                                 IsCheckedChanged="PaletteType_OnIsCheckedChanged"
                                  Name="RadPalRgb"/>
                     <RadioButton GroupName="PaletteType"
                                  Content="Indexed"
+                                 IsCheckedChanged="PaletteType_OnIsCheckedChanged"
                                  Name="RadPalIndexed"/>
                     <RadioButton GroupName="PaletteType"
                                  Content="CLUT Banks"
+                                 IsCheckedChanged="PaletteType_OnIsCheckedChanged"
                                  Name="RadPalClut"/>
                 </WrapPanel>
             </StackPanel>
             <WrapPanel Margin="10,5">
                 <WrapPanel>
                     <Label Content="Palette Offset"/>
-                    <NumericUpDown Value="{Binding PaletteOffset}" Margin="5,0"/>
+                    <NumericUpDown Name="NumPalOffset" Value="{Binding PaletteOffset}" ValueChanged="NumericUpDown_OnValueChanged" Margin="5,0"/>
                 </WrapPanel>
                 <WrapPanel>
                     <Label Margin="5,0" Content="Palette Length"/>
-                    <NumericUpDown Value="{Binding PaletteLength}"/>
+                    <NumericUpDown Name="NumPalLength"  Value="{Binding PaletteLength}" ValueChanged="NumericUpDown_OnValueChanged"/>
                 </WrapPanel>
             </WrapPanel>
             <TextBlock Text="Palettes" FontSize="16" Margin="10"/>

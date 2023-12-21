@@ -6,27 +6,17 @@ namespace OGCdiExplorer.Controls.HexView.Services;
 
 public class MemoryMappedLineReader: ILineReader
 {
-    private readonly FileStream _stream;
+    private readonly byte[] _bytes;
     private readonly MemoryMappedFile _file;
     private readonly MemoryMappedViewAccessor _accessor;
 
-    public MemoryMappedLineReader(string path) :
-        this(File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-    {
-    }
 
-    public MemoryMappedLineReader(FileStream stream)
+    public MemoryMappedLineReader(byte[] data)
     {
-        _stream = stream;
-        _file = MemoryMappedFile.CreateFromFile(
-            _stream,
-            null, 
-            0, 
-            MemoryMappedFileAccess.Read,
-            HandleInheritability.None,
-            false); 
-        _accessor = _file.CreateViewAccessor(0, _stream.Length, MemoryMappedFileAccess.Read);
-
+        _file = MemoryMappedFile.CreateNew(null, data.Length);
+        _bytes = data;
+        _accessor = _file.CreateViewAccessor();
+        _accessor.WriteArray(0, data, 0, data.Length);
     }
     
     public byte[] GetLine(long lineNumber, int width)
@@ -37,7 +27,7 @@ public class MemoryMappedLineReader: ILineReader
         for (var j = 0; j < width; j++)
         {
             var position = offset + j;
-            if (position < _stream.Length)
+            if (position < _bytes.Length)
             {
                 bytes[j] = _accessor.ReadByte(position);
             }
@@ -54,6 +44,5 @@ public class MemoryMappedLineReader: ILineReader
     {
         _accessor.Dispose();
         _file.Dispose();
-        _stream.Dispose();
     }
 }

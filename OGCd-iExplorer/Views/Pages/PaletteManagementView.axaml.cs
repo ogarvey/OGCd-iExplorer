@@ -16,6 +16,7 @@ using Avalonia.ReactiveUI;
 using OGCdiExplorer.Extensions;
 using OGCdiExplorer.Services;
 using OGCdiExplorer.ViewModels.Pages;
+using OGLibCDi.Enums;
 using OGLibCDi.Helpers;
 using OGLibCDi.Models;
 using SkiaSharp;
@@ -87,9 +88,21 @@ public partial class PaletteManagementView : ReactiveUserControl<PaletteManageme
         var paletteOffset = ((PaletteManagementViewModel)DataContext).PaletteOffset;
         var paletteLength = ((PaletteManagementViewModel)DataContext).PaletteLength;
         
-        paletteData = paletteData.Skip(paletteOffset).Take(paletteLength).ToArray();
         var palette = new List<Color>();
-        palette = ColorHelper.ConvertBytesToRGB(paletteData);
+        switch (ImageService.Instance.PaletteType)
+        {
+            case CdiPaletteType.RGB:
+                palette = ColorHelper.ConvertBytesToRGB(paletteData.Skip(paletteOffset).Take(paletteLength)
+                    .ToArray());
+                break;
+            case CdiPaletteType.Indexed:
+                palette = ColorHelper.ReadPalette(paletteData.Skip(paletteOffset).Take(paletteLength).ToArray());
+                break;
+            case CdiPaletteType.ClutBanks:
+                palette = ColorHelper.ReadClutBankPalettes(paletteData.Skip(paletteOffset).ToArray(),
+                    (byte)paletteLength);
+                break;
+        }
         var paletteBitmap = ColorHelper.CreateLabelledPalette(palette);
         
         var bitmapdata = paletteBitmap.LockBits(new Rectangle(0, 0, paletteBitmap.Width, paletteBitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
@@ -110,9 +123,21 @@ public partial class PaletteManagementView : ReactiveUserControl<PaletteManageme
         var paletteOffset = ((PaletteManagementViewModel)DataContext).PaletteOffset;
         var paletteLength = ((PaletteManagementViewModel)DataContext).PaletteLength;
         
-        paletteData = paletteData.Skip(paletteOffset).Take(paletteLength).ToArray();
         var palette = new List<Color>();
-        palette = ColorHelper.ConvertBytesToRGB(paletteData);
+        switch (ImageService.Instance.PaletteType)
+        {
+            case CdiPaletteType.RGB:
+                palette = ColorHelper.ConvertBytesToRGB(paletteData.Skip(paletteOffset).Take(paletteLength)
+                    .ToArray());
+                break;
+            case CdiPaletteType.Indexed:
+                palette = ColorHelper.ReadPalette(paletteData.Skip(paletteOffset).Take(paletteLength).ToArray());
+                break;
+            case CdiPaletteType.ClutBanks:
+                palette = ColorHelper.ReadClutBankPalettes(paletteData.Skip(paletteOffset).ToArray(),
+                    (byte)paletteLength);
+                break;
+        }
         var paletteBitmap = ColorHelper.CreateLabelledPalette(palette);
         
         var bitmapdata = paletteBitmap.LockBits(new Rectangle(0, 0, paletteBitmap.Width, paletteBitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
@@ -124,5 +149,47 @@ public partial class PaletteManagementView : ReactiveUserControl<PaletteManageme
         paletteBitmap.UnlockBits(bitmapdata);
         paletteBitmap.Dispose();
         ImgPalettePreview.Source = bitmap1;
+    }
+
+    private void PaletteType_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
+    {
+        if (((RadioButton)sender).IsChecked == false) return;
+        switch (((RadioButton)sender).Name)
+        {
+            case "RadPalRgb":
+                ImageService.Instance.PaletteType = CdiPaletteType.RGB;
+                break;
+            case "RadPalIndexed":
+                ImageService.Instance.PaletteType = CdiPaletteType.Indexed;
+                break;
+            case "RadPalClut":
+                ImageService.Instance.PaletteType = CdiPaletteType.ClutBanks;
+                break;
+        }
+    }
+
+    private void NumericUpDown_OnValueChanged(object? sender, NumericUpDownValueChangedEventArgs e)
+    {
+        switch (((NumericUpDown)sender).Name)
+        {
+            case "NumPalOffset":
+                ImageService.Instance.PaletteOffset = (int)e.NewValue;
+                break;
+            case "NumPalLength":
+                ImageService.Instance.PaletteLength = (int)e.NewValue;
+                break;
+            case "NumImgOffset":
+                ImageService.Instance.ImageOffset = (int)e.NewValue;
+                break;
+            case "NumImgLength":
+                ImageService.Instance.ImageLength = (int)e.NewValue;
+                break;
+            case "NumImgWidth":
+                ImageService.Instance.ImageWidth = (int)e.NewValue;
+                break; 
+            case "NumImgHeight":
+                ImageService.Instance.ImageHeight = (int)e.NewValue;
+                break;
+        }
     }
 }

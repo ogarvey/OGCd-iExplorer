@@ -64,13 +64,11 @@ public class HexFormatter: IHexFormatter
         for (var j = 0; j < width; j++)
         {
             var position = offset + j;
-
             var isSplit = j > 0 && j % 8 == 0;
             if (isSplit)
             {
                 sb.Append("| ");
             }
-
             if (position < _length)
             {
                 if (toBase == 16)
@@ -89,16 +87,13 @@ public class HexFormatter: IHexFormatter
                 var value = new string(' ', toBasePadding);
                 sb.Append(value);
             }
-
             sb.Append(' ');
         }
-
         sb.Append(" | ");
 
         for (var j = 0; j < width; j++)
         {
             var c = (char)bytes[j];
-
             sb.Append(char.IsControl(c) ? ' ' : c);
         }
     }

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:analysis="clr-namespace:OGCdiExplorer.Controls.Analysis"
              xmlns:views="clr-namespace:OGCdiExplorer.Views"
+             xmlns:pages="clr-namespace:OGCdiExplorer.Views.Pages"
              xmlns:vm="clr-namespace:OGCdiExplorer.ViewModels.Pages"
              xmlns:dialog="using:OGCdiExplorer.Services"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -26,21 +27,61 @@
                                  SectorCount="{Binding SelectedCdiFile.DataSectorCount, FallbackValue=0}"
                                  SectorType="Data" />
 
-      <Grid Grid.Column="3" ColumnDefinitions="1*,1*,1*,1*,1*" RowDefinitions="1*,1*">
-        <Panel Grid.Row="0" Grid.Column="0">
-          <CheckBox IsChecked="{Binding FilterVideo, Mode=TwoWay}" IsCheckedChanged="ToggleButton_OnIsCheckedChanged">Video</CheckBox>
-        </Panel>
-        <Separator Grid.Row="0" Grid.Column="1"></Separator>
-        <Panel Grid.Row="0" Grid.Column="2">
-          <CheckBox IsChecked="{Binding FilterAudio, Mode=TwoWay}" IsCheckedChanged="ToggleButton_OnIsCheckedChanged">Audio</CheckBox>
-        </Panel>
-        <Separator Grid.Row="0" Grid.Column="3"></Separator>
-        <Panel Grid.Row="0" Grid.Column="4">
-          <CheckBox IsChecked="{Binding FilterData, Mode=TwoWay}" IsCheckedChanged="ToggleButton_OnIsCheckedChanged">Data</CheckBox>
-        </Panel>
-        <Grid Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="1">
-          <Button Content="Preview Selected Sectors as Image" Command="{Binding ImagePreviewCommand}" />
-        </Grid>
+      <Grid Grid.Column="3" RowDefinitions="1*,1*">
+        <WrapPanel Grid.Row="0">
+          <StackPanel>
+            <StackPanel Margin="10,5">
+              <Label Content="Palette Type"/>
+              <WrapPanel Margin="5,0">
+                <RadioButton GroupName="PaletteType"
+                             Content="RGB"
+                             IsChecked="True"
+                             IsCheckedChanged="PaletteType_OnIsCheckedChanged"
+                             Name="RadPalRgb"/>
+                <RadioButton GroupName="PaletteType"
+                             Content="Indexed"
+                             IsCheckedChanged="PaletteType_OnIsCheckedChanged"
+                             Name="RadPalIndexed"/>
+                <RadioButton GroupName="PaletteType"
+                             Content="CLUT Banks"
+                             IsCheckedChanged="PaletteType_OnIsCheckedChanged"
+                             Name="RadPalClut"/>
+              </WrapPanel>
+            </StackPanel>
+            <WrapPanel Margin="10,5">
+              <WrapPanel>
+                <Label Content="Palette Offset"/>
+                <NumericUpDown Name="NumPalOffset" Value="{Binding PaletteOffset}" ValueChanged="NumericUpDown_OnValueChanged" Margin="5,0"/>
+              </WrapPanel>
+              <WrapPanel>
+                <Label Margin="5,0" Content="Palette Length"/>
+                <NumericUpDown Name="NumPalLength"  Value="{Binding PaletteLength}" ValueChanged="NumericUpDown_OnValueChanged"/>
+              </WrapPanel>
+            </WrapPanel>
+          </StackPanel>
+          <StackPanel>
+            <WrapPanel Margin="10,5">
+              <WrapPanel>
+                <Label Content="Image Offset"/>
+                <NumericUpDown Name="NumImgOffset"  Value="{Binding ImageOffset}" ValueChanged="NumericUpDown_OnValueChanged" Margin="5,0"/>
+              </WrapPanel>
+              <WrapPanel>
+                <Label Margin="5,0" Content="Image Length"/>
+                <NumericUpDown Name="NumImgLength"  Value="{Binding ImageLength}" ValueChanged="NumericUpDown_OnValueChanged"/>
+              </WrapPanel>
+            </WrapPanel>
+            <WrapPanel Margin="10,5">
+              <WrapPanel>
+                <Label Content="Image Width"/>
+                <NumericUpDown Name="NumImgWidth"  Value="{Binding ImageWidth}" ValueChanged="NumericUpDown_OnValueChanged" Margin="5,0"/>
+              </WrapPanel>
+              <WrapPanel>
+                <Label Margin="5,0" Content="Image Height"/>
+                <NumericUpDown Name="NumImgHeight"  Value="{Binding ImageHeight}" ValueChanged="NumericUpDown_OnValueChanged" />
+              </WrapPanel>
+            </WrapPanel>
+          </StackPanel>
+        </WrapPanel>
       </Grid>
     </Grid>
     <Grid Grid.Row="2" RowDefinitions="*,Auto" ColumnDefinitions="*,4,*">
@@ -82,6 +123,8 @@
             </MenuItem>
             <MenuItem Header="Select As Image" Click="MenuItemImage_OnClick" />
             <MenuItem Header="Select As Palette" Click="MenuItemPalette_OnClick" />
+            <MenuItem Header="Select For Audio Preview" Click="MenuItemPalette_OnClick" />
+            <MenuItem Header="Send To HexView" Click="MenuItemHex_OnClick" />
           </MenuFlyout>
         </DataGrid.ContextFlyout>
         <DataGrid.Styles>
@@ -108,9 +151,42 @@
         </DataGrid.Columns>
       </DataGrid>
       <GridSplitter Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Background="Black" ResizeDirection="Columns"/>
-      <Panel Grid.Row="0" Grid.RowSpan="2" Grid.Column="2">
-        <views:HexView/>
-      </Panel>
+      <TabControl  Grid.Row="0" Grid.RowSpan="2" Grid.Column="2">
+        <TabItem Header="Hex View">
+          <Panel>
+            <views:HexView Name="HexView"/>
+          </Panel>
+        </TabItem>
+        <TabItem Header="Image Preview">
+          <StackPanel>
+            <Panel>
+              <Image Name="ImgPreviewImage" Source="{Binding PreviewImage}" Height="480" Width="768" Stretch="Uniform"/>
+            </Panel>
+            <Panel Margin="0,10">
+              <Image Name="ImgPreviewPalette" Source="{Binding PreviewPalette}" Height="256" Width="512" Stretch="Uniform"/>
+            </Panel>
+          </StackPanel>
+        </TabItem>
+        <TabItem Header="Audio Preview">
+          <StackPanel Margin="10">
+            <WrapPanel>
+              <Label Content="Mono/Stereo"/>
+              <CheckBox IsChecked="{Binding IsMono}" />
+            </WrapPanel>
+            <WrapPanel>
+              <Label Content="Frequency"/>
+              <RadioButton Name="RadAud189" GroupName="Frequency" Content="18.9KHz" />
+              <RadioButton Name="RadAud378" GroupName="Frequency" Content="37.8KHz" />
+            </WrapPanel>
+            <WrapPanel>
+              <Label Content="Bits Per Sample"/>
+              <RadioButton Name="RadAud4Bps" GroupName="Frequency" Content="18.9KHz" />
+              <RadioButton Name="RadAud8Bps" GroupName="Frequency" Content="37.8KHz" />
+            </WrapPanel>
+          </StackPanel>
+        </TabItem>
+      </TabControl>
+      
     </Grid>
   </Grid>
 </UserControl>

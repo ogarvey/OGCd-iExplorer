@@ -2,23 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
-using Avalonia.VisualTree;
+using OGCdiExplorer.Controls.HexView.Services;
 using OGCdiExplorer.Services;
 using OGCdiExplorer.ViewModels.Pages;
-using OGCdiExplorer.ViewModels.Windows;
-using OGCdiExplorer.Views.Windows;
 using OGLibCDi.Enums;
 using OGLibCDi.Models;
-using ReactiveUI;
 
 namespace OGCdiExplorer.Views.Pages;
 
@@ -30,21 +21,6 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
     public AnalysisView()
     {
         InitializeComponent();
-        this.WhenActivated(action =>
-            action(ViewModel!.ShowDialog.RegisterHandler(DoShowDialogAsync)));
-    }
-
-    private void DoShowDialogAsync(InteractionContext<ImagePreviewViewModel,
-        bool?> interaction)
-    {
-        var dialog = new ImagePreview();
-        dialog.DataContext = interaction.Input;
-        dialog.Show((Window)TopLevel.GetTopLevel(this));
-    }
-
-    private void ToggleButton_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
-    {
-        ((AnalysisViewModel)DataContext).ApplySectorTypeFilters();
     }
 
     private void MenuItemSave_OnClick(object? sender, RoutedEventArgs e)
@@ -125,9 +101,17 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
             }
             _selectedBytes = sectorsToSave.SelectMany(x => x).ToArray();
             ImageService.Instance.ImageBytes = _selectedBytes;
-            ImageService.Instance.VideoType = _videoType;
             _videoType = (CdiVideoType)sectors[0].Coding.Coding;
             ((AnalysisViewModel)DataContext).VideoType = _videoType;
+            ImageService.Instance.VideoType = _videoType;
+            if (_videoType == CdiVideoType.DYUV || ImageService.Instance.PaletteBytes?.Length > 0)
+            {
+                ((AnalysisViewModel)DataContext).PopulateImage();
+                if (_videoType != CdiVideoType.DYUV)
+                {
+                    ((AnalysisViewModel)DataContext).PopulatePalette();
+                }
+            }
         }
     }
 
@@ -143,9 +127,53 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
             }
             _selectedBytes = sectorsToSave.SelectMany(x => x).ToArray();
             ImageService.Instance.PaletteBytes = _selectedBytes;
+            ((AnalysisViewModel)DataContext).PopulatePalette();
+            if (ImageService.Instance.ImageBytes?.Length > 0)
+            {
+                ((AnalysisViewModel)DataContext).PopulateImage();
+            }
         }
     }
 
+    private void SendToAudio_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var sectors = SectorList.SelectedItems.Cast<CdiSector>().ToList();
+        var sectorsToSave = new List<byte[]>();
+        if (sectors.Count > 0)
+        {
+            foreach (var sector in sectors)
+            {
+                sectorsToSave.Add(sector.GetSectorData());
+            }
+            _selectedBytes = sectorsToSave.SelectMany(x => x).ToArray();
+            ((AnalysisViewModel)DataContext).IsMono = sectors[0].Coding.IsMono;
+            RadAud189.IsChecked = sectors[0].Coding.SamplingFrequencyValue == 18900;
+            RadAud378.IsChecked = sectors[0].Coding.SamplingFrequencyValue == 37800;
+            RadAud4Bps.IsChecked = sectors[0].Coding.BitsPerSample == 4;
+            RadAud8Bps.IsChecked = sectors[0].Coding.BitsPerSample == 8;
+            ((AnalysisViewModel)DataContext).AudioBytes = _selectedBytes;
+            ((AnalysisViewModel)DataContext).PopulateAudio();
+        }
+    }
+
+    private void MenuItemHex_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var sectors = SectorList.SelectedItems.Cast<CdiSector>().ToList();
+        var sectorsToSave = new List<byte[]>();
+        if (sectors.Count > 0)
+        {
+            foreach (var sector in sectors)
+            {
+                sectorsToSave.Add(sector.GetSectorData());
+            }
+            var bytesToSend = sectorsToSave.SelectMany(x => x).ToArray();
+            HexView.HexViewControl1.LineReader?.Dispose();
+            HexView.HexViewControl1.LineReader = new MemoryMappedLineReader(bytesToSend);
+            HexView.HexViewControl1.HexFormatter = new HexFormatter(bytesToSend.Length);
+            HexView.HexViewControl1.InvalidateScrollable();
+            HexView.PathTextBox.Text = ((AnalysisViewModel)DataContext).SelectedCdiFile.FilePath;
+        }
+    }
     private void UpdateFilter(object? sender, TextChangedEventArgs e)
     {
         ((AnalysisViewModel)DataContext)?.ApplySectorTypeFilters();
@@ -154,5 +182,57 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
     private void ApplyVideoTypeFilter(object? sender, EventArgs e)
     {
         ((AnalysisViewModel)DataContext).ApplySectorTypeFilters();
+    }
+
+    private void PaletteType_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
+    {
+        if (((RadioButton)sender).IsChecked == false) return;
+        switch (((RadioButton)sender).Name)
+        {
+            case "RadPalRgb":
+                ImageService.Instance.PaletteType = CdiPaletteType.RGB;
+                break;
+            case "RadPalIndexed":
+                ImageService.Instance.PaletteType = CdiPaletteType.Indexed;
+                break;
+            case "RadPalClut":
+                ImageService.Instance.PaletteType = CdiPaletteType.ClutBanks;
+                break;
+        }
+    }
+
+    private void NumericUpDown_OnValueChanged(object? sender, NumericUpDownValueChangedEventArgs e)
+    {
+        switch (((NumericUpDown)sender).Name)
+        {
+            case "NumPalOffset":
+                ImageService.Instance.PaletteOffset = (int)e.NewValue;
+                break;
+            case "NumPalLength":
+                ImageService.Instance.PaletteLength = (int)e.NewValue;
+                break;
+            case "NumImgOffset":
+                ImageService.Instance.ImageOffset = (int)e.NewValue;
+                if(ImageService.Instance.ImageBytes.Length > 0)
+                    ((AnalysisViewModel)DataContext).PopulateImage();
+                break;
+            case "NumImgLength":
+                ImageService.Instance.ImageLength = (int)e.NewValue;
+                if(ImageService.Instance.ImageBytes.Length > 0)
+                    ((AnalysisViewModel)DataContext).PopulateImage();
+                break;
+            case "NumImgWidth":
+                ImageService.Instance.ImageWidth = (int)e.NewValue;
+                ImgPreviewImage.Width = (int)e.NewValue *2;
+                if(ImageService.Instance.ImageBytes.Length > 0)
+                    ((AnalysisViewModel)DataContext).PopulateImage();
+                break; 
+            case "NumImgHeight":
+                ImageService.Instance.ImageHeight = (int)e.NewValue;
+                ImgPreviewImage.Height = (int)e.NewValue *2;
+                if(ImageService.Instance.ImageBytes.Length > 0)
+                    ((AnalysisViewModel)DataContext).PopulateImage();
+                break;
+        }
     }
 }

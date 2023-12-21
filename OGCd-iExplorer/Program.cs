@@ -13,9 +13,6 @@ class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        IConfiguration ProgramConfig = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            .Build();
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
     }
