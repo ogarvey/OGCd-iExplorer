@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows.Input;
@@ -194,6 +196,13 @@ public class AnalysisViewModel : PageViewModel
         if (filtered != null) FilteredItems = new ObservableCollection<CdiSector>(filtered);
     }
 
+    private MemoryStream _memoryStream = new MemoryStream();
+    public MemoryStream AMemoryStream
+    {
+        get => _memoryStream;
+        set => this.RaiseAndSetIfChanged(ref _memoryStream, value);
+    }
+
     public void PopulatePalette()
     {
         PaletteBytes = ImageService.Instance.PaletteBytes;
@@ -298,6 +307,23 @@ public class AnalysisViewModel : PageViewModel
 
     public void PopulateAudio()
     {
+        AMemoryStream = new MemoryStream();
+        List<short> left = new List<short>();
+        List<short> right = new List<short>();
+
+        for (int i = 0; i < AudioBytes?.Length; i += 2304)
+        {
+            byte[] chunk = new byte[2304];
+            Array.Copy(AudioBytes, i, chunk, 0, 2304);
+            AudioHelper.DecodeAudioSector(chunk, left, right, BitsPerSample == 8, !IsMono);
+        }
+
+        AudioHelper.WAVHeader header = new AudioHelper.WAVHeader
+        {
+            ChannelNumber = (ushort)(IsMono ? 1 : 2), // Mono
+            Frequency = (uint)Frequency, // 18.9 kHz
+        };
         
+        AudioHelper.WriteWAV(AMemoryStream, header, left, right);
     }
 }

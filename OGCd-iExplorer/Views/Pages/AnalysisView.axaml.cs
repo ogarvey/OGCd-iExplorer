@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
+using ManagedBass;
 using OGCdiExplorer.Controls.HexView.Services;
 using OGCdiExplorer.Services;
 using OGCdiExplorer.ViewModels.Pages;
@@ -17,6 +19,7 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
 {
     private byte[] _selectedBytes;
     private CdiVideoType _videoType;
+    private int _stream;
 
     public AnalysisView()
     {
@@ -149,8 +152,10 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
             ((AnalysisViewModel)DataContext).IsMono = sectors[0].Coding.IsMono;
             RadAud189.IsChecked = sectors[0].Coding.SamplingFrequencyValue == 18900;
             RadAud378.IsChecked = sectors[0].Coding.SamplingFrequencyValue == 37800;
-            RadAud4Bps.IsChecked = sectors[0].Coding.BitsPerSample == 4;
-            RadAud8Bps.IsChecked = sectors[0].Coding.BitsPerSample == 8;
+            RadAud4Bps.IsChecked = sectors[0].Coding.BitsPerSample == 0;
+            RadAud8Bps.IsChecked = sectors[0].Coding.BitsPerSample == 1;
+            ((AnalysisViewModel)DataContext).Frequency = sectors[0].Coding.SamplingFrequencyValue;
+            ((AnalysisViewModel)DataContext).BitsPerSample = sectors[0].Coding.BitsPerSample == 0 ? 4 : 8;
             ((AnalysisViewModel)DataContext).AudioBytes = _selectedBytes;
             ((AnalysisViewModel)DataContext).PopulateAudio();
         }
@@ -234,5 +239,39 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
                     ((AnalysisViewModel)DataContext).PopulateImage();
                 break;
         }
+    }
+
+    private void PlayAudio_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (_stream == 0 && Bass.Init())
+        {
+            _stream = Bass.CreateStream(((AnalysisViewModel)DataContext).AMemoryStream.ToArray(), 0, ((AnalysisViewModel)DataContext).AMemoryStream.Length, BassFlags.Default);
+
+            if (_stream != 0)
+                Bass.ChannelPlay(_stream); // Play the stream
+            
+        } 
+        else if (_stream != 0 && Bass.ChannelIsActive(_stream) == PlaybackState.Paused)
+        {
+            Bass.ChannelPlay(_stream); // Play the stream
+        }
+        else if (_stream != 0 && Bass.ChannelIsActive(_stream) == PlaybackState.Playing)
+        {
+            Bass.ChannelPause(_stream); // Play the stream
+        }
+        else
+        {
+            Debugger.Break();
+        }
+    }
+
+    private void StopAudio_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (_stream == 0) return;
+        if (Bass.ChannelIsActive(_stream) != PlaybackState.Stopped)
+            Bass.ChannelStop(_stream);
+        Bass.StreamFree(_stream);
+        Bass.Free();
+        _stream = 0;
     }
 }

@@ -123,7 +123,7 @@
             </MenuItem>
             <MenuItem Header="Select As Image" Click="MenuItemImage_OnClick" />
             <MenuItem Header="Select As Palette" Click="MenuItemPalette_OnClick" />
-            <MenuItem Header="Select For Audio Preview" Click="MenuItemPalette_OnClick" />
+            <MenuItem Header="Select For Audio Preview" Click="SendToAudio_OnClick" />
             <MenuItem Header="Send To HexView" Click="MenuItemHex_OnClick" />
           </MenuFlyout>
         </DataGrid.ContextFlyout>
@@ -170,18 +170,28 @@
         <TabItem Header="Audio Preview">
           <StackPanel Margin="10">
             <WrapPanel>
-              <Label Content="Mono/Stereo"/>
-              <CheckBox IsChecked="{Binding IsMono}" />
+              <WrapPanel>
+                <Label Content="Mono/Stereo"/>
+                <CheckBox IsChecked="{Binding IsMono}" />
+              </WrapPanel>
+              <StackPanel>
+                <Label Content="Frequency"/>
+                <WrapPanel>
+                  <RadioButton Name="RadAud189" GroupName="Frequency" Content="18.9KHz" />
+                  <RadioButton Name="RadAud378" GroupName="Frequency" Content="37.8KHz" />
+                </WrapPanel>
+              </StackPanel>
+              <StackPanel>
+                <Label Content="Bits Per Sample"/>
+                <WrapPanel>
+                  <RadioButton Name="RadAud4Bps" GroupName="BitsPerSample" Content="4" />
+                  <RadioButton Name="RadAud8Bps" GroupName="BitsPerSample" Content="8" />
+                </WrapPanel>
+              </StackPanel>
             </WrapPanel>
             <WrapPanel>
-              <Label Content="Frequency"/>
-              <RadioButton Name="RadAud189" GroupName="Frequency" Content="18.9KHz" />
-              <RadioButton Name="RadAud378" GroupName="Frequency" Content="37.8KHz" />
-            </WrapPanel>
-            <WrapPanel>
-              <Label Content="Bits Per Sample"/>
-              <RadioButton Name="RadAud4Bps" GroupName="Frequency" Content="18.9KHz" />
-              <RadioButton Name="RadAud8Bps" GroupName="Frequency" Content="37.8KHz" />
+              <Button Name="BtnPlayAudio" Content="Play" Click="PlayAudio_OnClick" />
+              <Button Content="Stop" Click="StopAudio_OnClick" />
             </WrapPanel>
           </StackPanel>
         </TabItem>
