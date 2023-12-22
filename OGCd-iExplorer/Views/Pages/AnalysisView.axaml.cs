@@ -274,4 +274,30 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
         Bass.Free();
         _stream = 0;
     }
+
+    private void SaveAudio_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var bytes =((AnalysisViewModel)DataContext).AMemoryStream.ToArray();
+        var sector = SectorList.SelectedItems[0] as CdiSector;
+        var file = ((AnalysisViewModel)DataContext).SelectedCdiFile.FileName;
+        var bitsPerSample = sector.Coding.BitsPerSampleString;
+        var sampleRate = sector.Coding.SampleRateString;
+        var monoStereo = sector.Coding.IsMono ? "Mono" : "Stereo";
+        var final = $"{file}_{sector.FileNumber}_{sector.Channel}_{monoStereo}_{bitsPerSample}_{sampleRate}_{sector.SectorIndex}";
+        var dialog = new SaveFileDialog();
+        dialog.Filters.Add(new FileDialogFilter() { Name = "WAV", Extensions = { "wav" } });
+        dialog.Filters.Add(new FileDialogFilter() { Name = "All Files", Extensions = { "*" } });
+        dialog.InitialFileName = $"{final}.wav";
+        var result = dialog.ShowAsync((Window)TopLevel.GetTopLevel(this));
+        result.ContinueWith(task =>
+        {
+            if (task.Result != null)
+            {
+                using (var fs = new FileStream(task.Result, FileMode.Create, FileAccess.Write))
+                {
+                    fs.Write(bytes, 0, bytes.Length);
+                }
+            }
+        });
+    }
 }

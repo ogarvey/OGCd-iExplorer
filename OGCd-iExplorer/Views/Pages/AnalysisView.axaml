@@ -191,7 +191,8 @@
             </WrapPanel>
             <WrapPanel>
               <Button Name="BtnPlayAudio" Content="Play" Click="PlayAudio_OnClick" />
-              <Button Content="Stop" Click="StopAudio_OnClick" />
+              <Button Margin="10,0" Content="Stop" Click="StopAudio_OnClick" />
+              <Button Content="Save" Click="SaveAudio_OnClick" />
             </WrapPanel>
           </StackPanel>
         </TabItem>
