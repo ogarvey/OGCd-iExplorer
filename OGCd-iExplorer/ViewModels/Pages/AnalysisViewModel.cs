@@ -26,6 +26,12 @@ public class AnalysisViewModel : PageViewModel
         SelectedCdiFile = CdiFileService.Instance.CdiFile;
         FilteredItems = new ObservableCollection<CdiSector>(SelectedCdiFile.Sectors);
         Sectors = new ObservableCollection<CdiSector>(SelectedCdiFile.Sectors);
+        CdiFileService.Instance.CdiFileChanged += (sender, args) =>
+        {
+            SelectedCdiFile = CdiFileService.Instance.CdiFile;
+            FilteredItems = new ObservableCollection<CdiSector>(SelectedCdiFile.Sectors);
+            Sectors = new ObservableCollection<CdiSector>(SelectedCdiFile.Sectors);
+        };
     }
     
     private Bitmap _previewImage;
@@ -69,6 +75,27 @@ public class AnalysisViewModel : PageViewModel
     {
         get => _imageHeight;
         set => this.RaiseAndSetIfChanged(ref _imageHeight, value);
+    }
+    
+    private uint _initialY = 128;
+    public uint InitialY
+    {
+        get => _initialY;
+        set => this.RaiseAndSetIfChanged(ref _initialY, value);
+    }
+    
+    private uint _initialU = 128;
+    public uint InitialU
+    {
+        get => _initialU;
+        set => this.RaiseAndSetIfChanged(ref _initialU, value);
+    }
+    
+    private uint _initialV = 128;
+    public uint InitialV
+    {
+        get => _initialV;
+        set => this.RaiseAndSetIfChanged(ref _initialV, value);
     }
     
     private int _paletteOffset = 0;
@@ -182,6 +209,13 @@ public class AnalysisViewModel : PageViewModel
         get => _bitsPerSample;
         set => this.RaiseAndSetIfChanged(ref _bitsPerSample, value);
     }
+    
+    private int _sectorCount = 0;
+    public int SectorCount
+    {
+        get => _sectorCount;
+        set => this.RaiseAndSetIfChanged(ref _sectorCount, value);
+    }
 
     public void ApplySectorTypeFilters()
     {
@@ -202,6 +236,9 @@ public class AnalysisViewModel : PageViewModel
         get => _memoryStream;
         set => this.RaiseAndSetIfChanged(ref _memoryStream, value);
     }
+    
+    private string _toFormat = "CLUT7";
+    public string ToFormat { get => _toFormat; set => this.RaiseAndSetIfChanged(ref _toFormat, value); }
 
     public void PopulatePalette()
     {
@@ -249,6 +286,9 @@ public class AnalysisViewModel : PageViewModel
         ImageLength = ImageService.Instance.ImageLength;
         ImageWidth = ImageService.Instance.ImageWidth;
         ImageHeight = ImageService.Instance.ImageHeight;
+        InitialY = ImageService.Instance.InitialY;
+        InitialU = ImageService.Instance.InitialU;
+        InitialV = ImageService.Instance.InitialV;
         
         if (ImageBytes?.Length == 0) return;
 
@@ -277,8 +317,11 @@ public class AnalysisViewModel : PageViewModel
         switch (VideoType)
         {
             case CdiVideoType.DYUV:
+                var y = ImageService.Instance.InitialY;
+                var u = ImageService.Instance.InitialU;
+                var v = ImageService.Instance.InitialV;
                 img = ImageFormatHelper.DecodeDYUVImage(ImageBytes.Skip(ImageOffset).Take(ImageLength).ToArray(),
-                    ImageWidth, ImageHeight);
+                    ImageWidth, ImageHeight,y,u,v);
                 break;
             case CdiVideoType.RL7:
                 var bytes = ImageFormatHelper.DecodeRle(ImageBytes.Skip(ImageOffset).Take(ImageLength).ToArray(),
@@ -287,6 +330,7 @@ public class AnalysisViewModel : PageViewModel
                 img = new System.Drawing.Bitmap(image);
                 break;
             case CdiVideoType.CLUT7:
+            case CdiVideoType.CLUT8:
                 img = ImageFormatHelper.GenerateClutImage(palette,
                     ImageBytes.Skip(ImageOffset).Take(ImageLength).ToArray(), ImageWidth, ImageHeight);
                 break;
@@ -315,7 +359,15 @@ public class AnalysisViewModel : PageViewModel
         {
             byte[] chunk = new byte[2304];
             Array.Copy(AudioBytes, i, chunk, 0, 2304);
-            AudioHelper.DecodeAudioSector(chunk, left, right, BitsPerSample == 8, !IsMono);
+            try
+            {
+                AudioHelper.DecodeAudioSector(chunk, left, right, BitsPerSample == 8, !IsMono);
+
+            }
+            catch
+            {
+                continue;
+            }
         }
 
         AudioHelper.WAVHeader header = new AudioHelper.WAVHeader

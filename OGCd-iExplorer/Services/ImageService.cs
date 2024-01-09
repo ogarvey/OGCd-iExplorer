@@ -77,4 +77,25 @@ public class ImageService
         get => _imageHeight;
         set => _imageHeight = value;
     }
+
+    private uint _initialY = 128;
+    public uint InitialY
+    {
+        get => _initialY;
+        set => _initialY = value;
+    }
+    
+    private uint _initialU = 128;
+    public uint InitialU
+    {
+        get => _initialU;
+        set => _initialU = value;
+    }
+    
+    private uint _initialV = 128;
+    public uint InitialV
+    {
+        get => _initialV;
+        set => _initialV = value;
+    }
 }

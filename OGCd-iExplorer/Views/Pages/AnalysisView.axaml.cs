@@ -218,24 +218,39 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
                 break;
             case "NumImgOffset":
                 ImageService.Instance.ImageOffset = (int)e.NewValue;
-                if(ImageService.Instance.ImageBytes.Length > 0)
+                if(ImageService.Instance?.ImageBytes?.Length > 0)
                     ((AnalysisViewModel)DataContext).PopulateImage();
                 break;
             case "NumImgLength":
                 ImageService.Instance.ImageLength = (int)e.NewValue;
-                if(ImageService.Instance.ImageBytes.Length > 0)
+                if(ImageService.Instance?.ImageBytes?.Length > 0)
                     ((AnalysisViewModel)DataContext).PopulateImage();
                 break;
             case "NumImgWidth":
                 ImageService.Instance.ImageWidth = (int)e.NewValue;
                 ImgPreviewImage.Width = (int)e.NewValue *2;
-                if(ImageService.Instance.ImageBytes.Length > 0)
+                if(ImageService.Instance?.ImageBytes?.Length > 0)
                     ((AnalysisViewModel)DataContext).PopulateImage();
                 break; 
             case "NumImgHeight":
                 ImageService.Instance.ImageHeight = (int)e.NewValue;
                 ImgPreviewImage.Height = (int)e.NewValue *2;
-                if(ImageService.Instance.ImageBytes.Length > 0)
+                if(ImageService.Instance?.ImageBytes?.Length > 0)
+                    ((AnalysisViewModel)DataContext).PopulateImage();
+                break;
+            case "NumImgInitialY":
+                ImageService.Instance.InitialY = (uint)e.NewValue;
+                if(ImageService.Instance?.ImageBytes?.Length > 0)
+                    ((AnalysisViewModel)DataContext).PopulateImage();
+                break;
+            case "NumImgInitialU":
+                ImageService.Instance.InitialU = (uint)e.NewValue;
+                if(ImageService.Instance?.ImageBytes?.Length > 0)
+                    ((AnalysisViewModel)DataContext).PopulateImage();
+                break;
+            case "NumImgInitialV":
+                ImageService.Instance.InitialV = (uint)e.NewValue;
+                if(ImageService.Instance?.ImageBytes?.Length > 0)
                     ((AnalysisViewModel)DataContext).PopulateImage();
                 break;
         }
@@ -299,5 +314,29 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
                 }
             }
         });
+    }
+
+    private void ToFormatComboBox_OnDropDownClosed(object? sender, EventArgs e)
+    {
+        var format = ((ComboBox)sender).SelectedItem.ToString();
+        switch (format)
+        {
+            case "CLUT7":
+                ImageService.Instance.VideoType = CdiVideoType.CLUT7;
+                break;
+            case "RLE":
+                ImageService.Instance.VideoType = CdiVideoType.RL7;
+                break;
+            case "DYUV":
+                ImageService.Instance.VideoType = CdiVideoType.DYUV;
+                break;
+        }
+        if(ImageService.Instance?.ImageBytes?.Length > 0)
+            ((AnalysisViewModel)DataContext).PopulateImage();
+    }
+
+    private void SectorList_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        ((AnalysisViewModel)DataContext).SectorCount = SectorList.SelectedItems.Count;
     }
 }

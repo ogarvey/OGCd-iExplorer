@@ -11,10 +11,15 @@
              dialog:DialogService.Register="{Binding}"
              x:Class="OGCdiExplorer.Views.Pages.AnalysisView"
              x:DataType="vm:AnalysisViewModel">
-  <Grid RowDefinitions="1*,1*,4*">
-    <Panel Grid.Row="0">
+  <ScrollViewer>
+    <Grid RowDefinitions="1*,1*,4*">
+    <WrapPanel Grid.Row="0">
       <TextBlock Padding="10" Text="{Binding SelectedCdiFile.FilePath}"></TextBlock>
-    </Panel>
+      <StackPanel>
+        <TextBlock Padding="10" Text="Sectors Selected:"/>
+        <TextBlock Padding="10" Text="{Binding SectorCount}"></TextBlock>
+      </StackPanel>
+    </WrapPanel>
     <Grid Grid.Row="1" ColumnDefinitions="1*,1*,1*,3*">
 
       <analysis:SectorDataHeader Grid.Column="0" x:Name="VidInfo"
@@ -112,7 +117,8 @@
                 GridLinesVisibility="All"
                 HorizontalGridLinesBrush="Cyan"
                 MaxHeight="800"
-                BorderThickness="1" BorderBrush="Gray">
+                BorderThickness="1" BorderBrush="Gray"
+                SelectionChanged="SectorList_OnSelectionChanged">
         <DataGrid.ContextFlyout>
           <MenuFlyout>
             <MenuItem Header="Save Sectors">
@@ -159,7 +165,30 @@
         </TabItem>
         <TabItem Header="Image Preview">
           <StackPanel>
-            <Panel>
+            <Panel Margin="0,10">
+              <ComboBox Name="ToFormatComboBox"
+                        SelectedIndex="{Binding ToFormat}"
+                        Margin="4"
+                        DropDownClosed="ToFormatComboBox_OnDropDownClosed">
+                <ComboBox.Items>
+                  <x:String>RLE</x:String>
+                  <x:String>CLUT7</x:String>
+                  <x:String>DYUV</x:String>
+                </ComboBox.Items>
+              </ComboBox>
+              <TextBlock Text="Format" 
+                         VerticalAlignment="Center"
+                         Margin="4"/>
+            </Panel>
+              <WrapPanel Margin="0,10">
+                <Label Content="Initial Y"/>
+                <NumericUpDown Name="NumImgInitialY" Value="{Binding InitialY}"  ValueChanged="NumericUpDown_OnValueChanged" Margin="5,0"/>
+                <Label Content="Initial Y"/>
+                <NumericUpDown Name="NumImgInitialU" Value="{Binding InitialU}"  ValueChanged="NumericUpDown_OnValueChanged" Margin="5,0"/>
+                <Label Content="Initial Y"/>
+                <NumericUpDown Name="NumImgInitialV" Value="{Binding InitialV}"  ValueChanged="NumericUpDown_OnValueChanged" Margin="5,0"/>
+              </WrapPanel>
+            <Panel Margin="0,10">
               <Image Name="ImgPreviewImage" Source="{Binding PreviewImage}" Height="480" Width="768" Stretch="Uniform"/>
             </Panel>
             <Panel Margin="0,10">
@@ -200,4 +229,5 @@
       
     </Grid>
   </Grid>
+  </ScrollViewer>
 </UserControl>
