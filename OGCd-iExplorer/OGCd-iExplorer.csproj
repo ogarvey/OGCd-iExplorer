@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -50,8 +50,6 @@
 
     <ItemGroup>
       <Folder Include="Adapters\" />
-      <Folder Include="ViewModels\Windows\" />
-      <Folder Include="Views\Windows\" />
     </ItemGroup>
 
 
@@ -62,6 +60,10 @@
 
     <ItemGroup>
       <Compile Remove="obj\**" />
+      <Compile Update="Views\Windows\PaletteManagementView.axaml.cs">
+        <DependentUpon>PaletteManagementView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
 
@@ -77,5 +79,11 @@
 
     <ItemGroup>
       <None Remove="obj\**" />
+      <None Update="Assets\bass.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Assets\OGLibCD-i.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 </Project>

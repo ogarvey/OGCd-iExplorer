@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using OGCdiExplorer.Services;
 using OGCdiExplorer.ViewModels.Pages;
+using OGCdiExplorer.ViewModels.Windows;
+using OGCdiExplorer.Views.Windows;
 using OGLibCDi.Models;
 using ReactiveUI;
 
@@ -9,6 +11,9 @@ namespace OGCdiExplorer.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
+    private BoltFileParser? _boltFileParser;
+    private PaletteManagementView? _paletteManagementView;
+    
     public MainWindowViewModel()
     {
     }
@@ -43,16 +48,40 @@ public class MainWindowViewModel : ViewModelBase
 
     public void ViewPaletteManagement()
     { 
-        if (_previousPage is PaletteManagementViewModel)
+        if (_paletteManagementView is not null)
         {
-            (PreviousPage, CurrentPage) = (CurrentPage, PreviousPage);
+            _paletteManagementView.Activate();
         }
-        else
+        
+        var viewModel = new PaletteManagementViewModel();
+        _paletteManagementView = new PaletteManagementView
         {
-            PreviousPage = CurrentPage;
-            CurrentPage =
-                new PaletteManagementViewModel();
+            DataContext = viewModel
+        };
+        _paletteManagementView.Closed += (sender, args) =>
+        {
+            _paletteManagementView = null;
+        };
+        _paletteManagementView.Show();
+    }
+    
+    public void OpenBoltFileParser()
+    {
+        
+        if (_boltFileParser is not null)
+        {
+            _boltFileParser.Activate();
         }
+        var viewModel = new BoltFileParserViewModel();
+        _boltFileParser = new BoltFileParser
+        {
+            DataContext = viewModel
+        };
+        _boltFileParser.Closed += (sender, args) =>
+        {
+            _boltFileParser = null;
+        };
+        _boltFileParser.Show();
     }
 
     private PageViewModel? _previousPage;

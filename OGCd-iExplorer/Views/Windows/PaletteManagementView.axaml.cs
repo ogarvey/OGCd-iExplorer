@@ -1,32 +1,25 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 using Avalonia.Platform.Storage;
-using Avalonia.ReactiveUI;
 using OGCdiExplorer.Extensions;
+using OGCdiExplorer.Models;
 using OGCdiExplorer.Services;
-using OGCdiExplorer.ViewModels.Pages;
+using OGCdiExplorer.ViewModels.Windows;
 using OGLibCDi.Enums;
 using OGLibCDi.Helpers;
-using OGLibCDi.Models;
-using SkiaSharp;
 using Bitmap = Avalonia.Media.Imaging.Bitmap;
+using Image = Avalonia.Controls.Image;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 using Rectangle = System.Drawing.Rectangle;
 
-namespace OGCdiExplorer.Views.Pages;
+namespace OGCdiExplorer.Views.Windows;
 
-public partial class PaletteManagementView : ReactiveUserControl<PaletteManagementViewModel>
+public partial class PaletteManagementView : Window
 {
     public PaletteManagementView()
     {
@@ -46,7 +39,7 @@ public partial class PaletteManagementView : ReactiveUserControl<PaletteManageme
             Title = "Choose a palette file",
             FileTypeFilter = new List<FilePickerFileType>() { filter }
         });
-    
+
         if (files.Count >= 1)
         {
             // Open reading stream from the first file.
@@ -57,7 +50,7 @@ public partial class PaletteManagementView : ReactiveUserControl<PaletteManageme
             ((PaletteManagementViewModel)DataContext).PaletteData = fileContent;
         }
     }
-    
+
     private async void SavePalette_OnClick(object? sender, RoutedEventArgs e)
     {
         var topLevel = TopLevel.GetTopLevel(this);
@@ -71,7 +64,7 @@ public partial class PaletteManagementView : ReactiveUserControl<PaletteManageme
             Title = "Choose a palette file",
             FileTypeFilter = new List<FilePickerFileType>() { filter }
         });
-    
+
         if (files.Count >= 1)
         {
             // Open writing stream from the first file.
@@ -81,14 +74,31 @@ public partial class PaletteManagementView : ReactiveUserControl<PaletteManageme
             streamWriter.Write(((PaletteManagementViewModel)DataContext).PaletteData);
         }
     }
-    
-    private void ParsePalette_OnClick(object? sender, RoutedEventArgs e)
+
+    private async void ParsePalette_OnClick(object? sender, RoutedEventArgs e)
     {
         var paletteData = ((PaletteManagementViewModel)DataContext).PaletteData;
         var paletteOffset = ((PaletteManagementViewModel)DataContext).PaletteOffset;
         var paletteLength = ((PaletteManagementViewModel)DataContext).PaletteLength;
-        
+
+        if (paletteData.Length == 0 || paletteData.Length < paletteOffset || paletteLength == 0)
+        {
+            return;
+        }
+
+        if (paletteData.Length < paletteOffset + paletteLength)
+        {
+            paletteLength = paletteData.Length - paletteOffset;
+            if (paletteLength <= 0)
+            {
+                return;
+            }
+
+            ((PaletteManagementViewModel)DataContext).PaletteLength = paletteLength;
+        }
+
         var palette = new List<Color>();
+
         switch (ImageService.Instance.PaletteType)
         {
             case CdiPaletteType.RGB:
@@ -103,26 +113,42 @@ public partial class PaletteManagementView : ReactiveUserControl<PaletteManageme
                     (byte)paletteLength);
                 break;
         }
-        var paletteBitmap = ColorHelper.CreateLabelledPalette(palette);
-        
-        var bitmapdata = paletteBitmap.LockBits(new Rectangle(0, 0, paletteBitmap.Width, paletteBitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-        Bitmap bitmap1 = new Bitmap(Avalonia.Platform.PixelFormat.Bgra8888, Avalonia.Platform.AlphaFormat.Premul,
-            bitmapdata.Scan0,
-            new Avalonia.PixelSize(bitmapdata.Width, bitmapdata.Height),
-            new Avalonia.Vector(96, 96),
-            bitmapdata.Stride);
-        paletteBitmap.UnlockBits(bitmapdata);
-        paletteBitmap.Dispose();
-        ImgPalettePreview.Source = bitmap1;
+        ((PaletteManagementViewModel)DataContext).Palette = palette;
+        PopulatePaletteImage(palette);
+        if (ImageService.Instance?.ImageBytes?.Length > 0)
+        {
+            ((PaletteManagementViewModel)DataContext).ParseImage();
+        }
     }
 
-    private void ParseSectorsPalette_OnClick(object? sender, RoutedEventArgs e)
+    private void PopulatePaletteImage(List<Color> palette)
+    {
+        var paletteBitmap = ColorHelper.CreateLabelledPalette(palette);
+
+        var bitmapdata = paletteBitmap.LockBits(new Rectangle(0, 0, paletteBitmap.Width, paletteBitmap.Height),
+            ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+        Bitmap bitmap1 = new Bitmap(Avalonia.Platform.PixelFormat.Bgra8888, Avalonia.Platform.AlphaFormat.Premul,
+            bitmapdata.Scan0,
+            new Avalonia.PixelSize(bitmapdata.Width, bitmapdata.Height),
+            new Avalonia.Vector(96, 96),
+            bitmapdata.Stride);
+        paletteBitmap.UnlockBits(bitmapdata);
+        paletteBitmap.Dispose();
+        ((PaletteManagementViewModel)DataContext).PaletteImage = bitmap1;
+    }
+
+    private void RotatePalette_OnClick(object? sender, RoutedEventArgs e)
+    {
+        ((PaletteManagementViewModel)DataContext).RotatePalette();
+    }
+
+    private async void ParseSectorsPalette_OnClick(object? sender, RoutedEventArgs e)
     {
         var paletteData = ImageService.Instance.PaletteBytes;
-        
+
         var paletteOffset = ((PaletteManagementViewModel)DataContext).PaletteOffset;
         var paletteLength = ((PaletteManagementViewModel)DataContext).PaletteLength;
-        
+
         var palette = new List<Color>();
         switch (ImageService.Instance.PaletteType)
         {
@@ -138,17 +164,13 @@ public partial class PaletteManagementView : ReactiveUserControl<PaletteManageme
                     (byte)paletteLength);
                 break;
         }
-        var paletteBitmap = ColorHelper.CreateLabelledPalette(palette);
-        
-        var bitmapdata = paletteBitmap.LockBits(new Rectangle(0, 0, paletteBitmap.Width, paletteBitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-        Bitmap bitmap1 = new Bitmap(Avalonia.Platform.PixelFormat.Bgra8888, Avalonia.Platform.AlphaFormat.Premul,
-            bitmapdata.Scan0,
-            new Avalonia.PixelSize(bitmapdata.Width, bitmapdata.Height),
-            new Avalonia.Vector(96, 96),
-            bitmapdata.Stride);
-        paletteBitmap.UnlockBits(bitmapdata);
-        paletteBitmap.Dispose();
-        ImgPalettePreview.Source = bitmap1;
+
+        ((PaletteManagementViewModel)DataContext).Palette = palette;
+        PopulatePaletteImage(palette);
+        if (ImageService.Instance.ImageBytes.Length > 0)
+        {
+            ((PaletteManagementViewModel)DataContext).ParseImage();
+        }
     }
 
     private void PaletteType_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
@@ -186,9 +208,64 @@ public partial class PaletteManagementView : ReactiveUserControl<PaletteManageme
                 break;
             case "NumImgWidth":
                 ImageService.Instance.ImageWidth = (int)e.NewValue;
-                break; 
+                break;
             case "NumImgHeight":
                 ImageService.Instance.ImageHeight = (int)e.NewValue;
+                break;
+        }
+    }
+
+    private void AddRotation_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var rotationStartIndex = ((PaletteManagementViewModel)DataContext).RotationStartIndex;
+        var rotationEndIndex = ((PaletteManagementViewModel)DataContext).RotationEndIndex;
+        var rotationPermutations = ((PaletteManagementViewModel)DataContext).RotationPermutations;
+        var reverseRotation = ((PaletteManagementViewModel)DataContext).ReverseRotation;
+
+        ((PaletteManagementViewModel)DataContext).PaletteRotations.Add(new PaletteRotation(rotationStartIndex,
+            rotationEndIndex, rotationPermutations, reverseRotation));
+    }
+
+    private async void LoadImagePreview_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var topLevel = TopLevel.GetTopLevel(this);
+        var filter = new FilePickerFileType("Image")
+        {
+            Patterns = new List<string>() { "*.bin" }
+        };
+        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
+        {
+            AllowMultiple = false,
+            Title = "Choose an image file",
+            FileTypeFilter = new List<FilePickerFileType>() { filter }
+        });
+
+        if (files.Count >= 1)
+        {
+            // Open reading stream from the first file.
+            using var stream = files[0].OpenReadAsync().Result;
+            using var streamReader = new BinaryReader(stream);
+            // Reads all the content of file as a text.
+            var fileContent = streamReader.ReadAllBytes();
+            ImageService.Instance.ImageBytes = fileContent;
+        }
+        
+        if (ImageService.Instance.ImageBytes.Length > 0)
+        {
+            ((PaletteManagementViewModel)DataContext).ImageLoaded = true;
+            ((PaletteManagementViewModel)DataContext).ParseImage();
+        }
+    }
+
+    private void ImageFormat_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
+    {
+        switch (sender)
+        {
+            case RadioButton {Name: "RadImgRgb"}:
+                ImageService.Instance.VideoType = CdiVideoType.RL7;
+                break;
+            case RadioButton {Name: "RadImgClut"}:
+                ImageService.Instance.VideoType = CdiVideoType.CLUT7;
                 break;
         }
     }

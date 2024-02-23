@@ -208,50 +208,57 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
 
     private void NumericUpDown_OnValueChanged(object? sender, NumericUpDownValueChangedEventArgs e)
     {
-        switch (((NumericUpDown)sender).Name)
+        switch ((sender as NumericUpDown)?.Name)
         {
             case "NumPalOffset":
-                ImageService.Instance.PaletteOffset = (int)e.NewValue;
+                ImageService.Instance.PaletteOffset =  (int)(e.NewValue ?? 0.0m);
                 break;
             case "NumPalLength":
-                ImageService.Instance.PaletteLength = (int)e.NewValue;
+                ImageService.Instance.PaletteLength =  (int)(e.NewValue ?? 384.0m);
                 break;
             case "NumImgOffset":
-                ImageService.Instance.ImageOffset = (int)e.NewValue;
+                ImageService.Instance.ImageOffset = (int)(e.NewValue ?? 0.0m);
                 if(ImageService.Instance?.ImageBytes?.Length > 0)
-                    ((AnalysisViewModel)DataContext).PopulateImage();
+                    if (DataContext != null)
+                        ((AnalysisViewModel)DataContext).PopulateImage();
                 break;
             case "NumImgLength":
-                ImageService.Instance.ImageLength = (int)e.NewValue;
+                ImageService.Instance.ImageLength =  (int)(e.NewValue ?? 92160.0m);
                 if(ImageService.Instance?.ImageBytes?.Length > 0)
-                    ((AnalysisViewModel)DataContext).PopulateImage();
+                    if (DataContext != null)
+                        ((AnalysisViewModel)DataContext).PopulateImage();
                 break;
             case "NumImgWidth":
-                ImageService.Instance.ImageWidth = (int)e.NewValue;
-                ImgPreviewImage.Width = (int)e.NewValue *2;
+                ImageService.Instance.ImageWidth =  (int)(e.NewValue ?? 384.0m);
+                ImgPreviewImage.Width =  (int)(e.NewValue ?? 384.0m) *2;
                 if(ImageService.Instance?.ImageBytes?.Length > 0)
-                    ((AnalysisViewModel)DataContext).PopulateImage();
+                    if (DataContext != null)
+                        ((AnalysisViewModel)DataContext).PopulateImage();
                 break; 
             case "NumImgHeight":
-                ImageService.Instance.ImageHeight = (int)e.NewValue;
-                ImgPreviewImage.Height = (int)e.NewValue *2;
+                ImageService.Instance.ImageHeight =  (int)(e.NewValue ?? 240.0m);
+                ImgPreviewImage.Height =  (int)(e.NewValue ?? 240.0m) *2;
                 if(ImageService.Instance?.ImageBytes?.Length > 0)
-                    ((AnalysisViewModel)DataContext).PopulateImage();
+                    if (DataContext != null)
+                        ((AnalysisViewModel)DataContext).PopulateImage();
                 break;
             case "NumImgInitialY":
-                ImageService.Instance.InitialY = (uint)e.NewValue;
+                ImageService.Instance.InitialY =  (uint)(e.NewValue ?? 128.0m);
                 if(ImageService.Instance?.ImageBytes?.Length > 0)
-                    ((AnalysisViewModel)DataContext).PopulateImage();
+                    if (DataContext != null)
+                        ((AnalysisViewModel)DataContext).PopulateImage();
                 break;
             case "NumImgInitialU":
-                ImageService.Instance.InitialU = (uint)e.NewValue;
+                ImageService.Instance.InitialU = (uint)(e.NewValue ?? 128.0m);
                 if(ImageService.Instance?.ImageBytes?.Length > 0)
-                    ((AnalysisViewModel)DataContext).PopulateImage();
+                    if (DataContext != null)
+                        ((AnalysisViewModel)DataContext).PopulateImage();
                 break;
             case "NumImgInitialV":
-                ImageService.Instance.InitialV = (uint)e.NewValue;
+                ImageService.Instance.InitialV = (uint)(e.NewValue ?? 128.0m);
                 if(ImageService.Instance?.ImageBytes?.Length > 0)
-                    ((AnalysisViewModel)DataContext).PopulateImage();
+                    if (DataContext != null)
+                        ((AnalysisViewModel)DataContext)?.PopulateImage();
                 break;
         }
     }

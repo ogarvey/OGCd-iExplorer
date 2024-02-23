@@ -34,6 +34,7 @@
                     <Button IsEnabled="{Binding IsCdiFileLoaded}" Command="{Binding ViewCdiFile}" Content="Analysis" />
                     <Button Margin="10,0,0,0" Command="{Binding ViewTitleManagement}" Content="Title Manager" />
                     <Button Margin="10,0,0,0" Command="{Binding ViewPaletteManagement}" Content="Palette Manager" />
+                    <Button Margin="10,0,0,0" Command="{Binding OpenBoltFileParser}" Content="BoltFile Parser" />
                 </WrapPanel>
                 <TransitioningContentControl Content="{Binding CurrentPage}" />
             </StackPanel>

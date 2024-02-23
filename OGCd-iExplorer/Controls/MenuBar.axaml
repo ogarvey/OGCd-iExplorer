@@ -2,9 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:controls="clr-namespace:OGCdiExplorer.ViewModels.Controls"
+             xmlns:vm="clr-namespace:OGCdiExplorer.ViewModels.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="OGCdiExplorer.Controls.MenuBar">
+             x:Class="OGCdiExplorer.Controls.MenuBar"
+             x:DataType="vm:MenuBarViewModel">
     
     <WrapPanel HorizontalAlignment="Left">
         <StackPanel>
@@ -18,9 +19,6 @@
                 </MenuItem>
                 <MenuItem Header="Audio">
                     <MenuItem Header="Clip Manager" />
-                </MenuItem>
-                <MenuItem Header="Data">
-                    <MenuItem Header="Data Manager" />
                 </MenuItem>
             </Menu>
         </StackPanel>

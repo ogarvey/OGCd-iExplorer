@@ -1,0 +1,61 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:OGCdiExplorer.ViewModels.Windows"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="OGCdiExplorer.Views.Windows.BoltFileParser"
+        x:DataType="vm:BoltFileParserViewModel"
+        Title="BoltFileParser"
+        Resized="WindowBase_OnResized">
+  <StackPanel>
+    <Menu>
+      <MenuItem Header="File">
+        <MenuItem Header="Open" Command="{Binding OpenCommand}"/>
+        <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
+      </MenuItem>
+    </Menu>
+    <StackPanel IsVisible="{Binding ShowFileReceiver}">
+      <Border 
+        Margin="13,0,0,0"
+        BorderBrush="Cyan"
+        BorderThickness="10"
+        DragDrop.AllowDrop="True"
+        x:Name="DropBorder"
+        Background="Gray"
+        Height="200"
+        Width="200"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        >
+        <TextBlock VerticalAlignment="Center" 
+                   HorizontalAlignment="Center" 
+                   Text="Drop File Here"/>
+      </Border>
+    </StackPanel>
+    <WrapPanel>
+      <ScrollViewer>
+        <DataGrid x:Name="OffsetsDataGrid"
+                  ItemsSource="{Binding BoltOffsets, Mode=OneWay}" 
+                  Width="400"
+                  Height="960"
+                  GridLinesVisibility="All"
+                  HorizontalGridLinesBrush="Cyan"
+                  BorderThickness="1" 
+                  BorderBrush="Gray">
+          <DataGrid.Styles>
+            <Style Selector="DataGridColumnHeader">
+              <Setter Property="Foreground" Value="DarkCyan" />
+              <Setter Property="Background" Value="Cyan" />
+            </Style>
+          </DataGrid.Styles>
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="Offset" Binding="{Binding Offset, Mode=OneWay}" />
+            <DataGridTextColumn Header="Initial Data Length" Binding="{Binding InitialDataLength}"/>
+            <DataGridTextColumn Header="Payload Data Length" Binding="{Binding SecondaryDataLength}"/>
+          </DataGrid.Columns>
+        </DataGrid>
+      </ScrollViewer>
+    </WrapPanel>
+  </StackPanel>
+</Window>
