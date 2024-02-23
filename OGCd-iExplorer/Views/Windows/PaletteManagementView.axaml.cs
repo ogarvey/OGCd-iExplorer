@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using OGCdiExplorer.Extensions;
@@ -200,17 +201,19 @@ public partial class PaletteManagementView : Window
             case "NumPalLength":
                 ImageService.Instance.PaletteLength = (int)e.NewValue;
                 break;
-            case "NumImgOffset":
-                ImageService.Instance.ImageOffset = (int)e.NewValue;
-                break;
-            case "NumImgLength":
-                ImageService.Instance.ImageLength = (int)e.NewValue;
-                break;
             case "NumImgWidth":
                 ImageService.Instance.ImageWidth = (int)e.NewValue;
+                if (ImageService.Instance?.ImageBytes?.Length > 0)
+                {
+                    ((PaletteManagementViewModel)DataContext).ParseImage();
+                }
                 break;
             case "NumImgHeight":
                 ImageService.Instance.ImageHeight = (int)e.NewValue;
+                if (ImageService.Instance?.ImageBytes?.Length > 0)
+                {
+                    ((PaletteManagementViewModel)DataContext).ParseImage();
+                }
                 break;
         }
     }
@@ -268,5 +271,11 @@ public partial class PaletteManagementView : Window
                 ImageService.Instance.VideoType = CdiVideoType.CLUT7;
                 break;
         }
+    }
+
+    private void RemoveRotation_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var paletteRotations = ((PaletteManagementViewModel)DataContext).PaletteRotations;
+        paletteRotations.RemoveAt(paletteRotations.Count - 1);
     }
 }

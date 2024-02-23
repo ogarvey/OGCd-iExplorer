@@ -32,6 +32,20 @@ public class PaletteManagementViewModel : PageViewModel
         set => this.RaiseAndSetIfChanged(ref _paletteLength, value);
     }
     
+    private int _imageWidth = 320;
+    public int ImageWidth
+    {
+        get => _imageWidth;
+        set => this.RaiseAndSetIfChanged(ref _imageWidth, value);
+    }
+    
+    private int _imageHeight = 160;
+    public int ImageHeight
+    {
+        get => _imageHeight;
+        set => this.RaiseAndSetIfChanged(ref _imageHeight, value);
+    }
+    
     private byte[] _paletteData = new byte[384];
     public byte[] PaletteData
     {
@@ -111,17 +125,17 @@ public class PaletteManagementViewModel : PageViewModel
 
     public void ParseImage()
     {
-        System.Drawing.Bitmap img = new System.Drawing.Bitmap(384, 240);
+        System.Drawing.Bitmap img = new System.Drawing.Bitmap(ImageWidth, ImageHeight);
         if (ImageService.Instance.ImageBytes?.Length > 0)
         {
             switch (ImageService.Instance.VideoType)
             {
                 case CdiVideoType.CLUT7:
-                    img = ImageFormatHelper.GenerateClutImage(Palette, ImageService.Instance.ImageBytes, 384, 240);
+                    img = ImageFormatHelper.GenerateClutImage(Palette, ImageService.Instance.ImageBytes, ImageWidth, ImageHeight);
                     break;
                 case CdiVideoType.RL7:
                 default:
-                    img = new System.Drawing.Bitmap(ImageFormatHelper.GenerateRle7Image(Palette, ImageService.Instance.ImageBytes, 384, 240));
+                    img = new System.Drawing.Bitmap(ImageFormatHelper.GenerateRle7Image(Palette, ImageService.Instance.ImageBytes, ImageWidth, ImageHeight));
                     break;
             }
             

@@ -61,22 +61,28 @@
                     </WrapPanel>
                 </Grid>
             </StackPanel>
-            <WrapPanel Margin="10,5">
-                <WrapPanel>
-                    <Label Content="Palette Offset"/>
-                    <NumericUpDown Name="NumPalOffset" Value="{Binding PaletteOffset}" ValueChanged="NumericUpDown_OnValueChanged" Margin="5,0"/>
+            <Grid Margin="10,5" ColumnDefinitions="*,4,*">
+                <WrapPanel Grid.Column="0">
+                    <WrapPanel>
+                        <Label Content="Palette Offset"/>
+                        <NumericUpDown Name="NumPalOffset" Value="{Binding PaletteOffset}" ValueChanged="NumericUpDown_OnValueChanged" Margin="5,0"/>
+                    </WrapPanel>
+                    <WrapPanel>
+                        <Label Margin="5,0" Content="Palette Length"/>
+                        <NumericUpDown Name="NumPalLength"  Value="{Binding PaletteLength}" ValueChanged="NumericUpDown_OnValueChanged"/>
+                    </WrapPanel>
                 </WrapPanel>
-                <WrapPanel>
-                    <Label Margin="5,0" Content="Palette Length"/>
-                    <NumericUpDown Name="NumPalLength"  Value="{Binding PaletteLength}" ValueChanged="NumericUpDown_OnValueChanged"/>
+                <WrapPanel Grid.Column="2">
+                    <WrapPanel>
+                        <Label Content="Preview Width"/>
+                        <NumericUpDown Name="NumImageWidth" Value="{Binding ImageWidth}" ValueChanged="NumericUpDown_OnValueChanged" Margin="5,0"/>
+                    </WrapPanel>
+                    <WrapPanel>
+                        <Label Margin="5,0" Content="Preview Height"/>
+                        <NumericUpDown Name="NumImageHeight"  Value="{Binding ImageHeight}" ValueChanged="NumericUpDown_OnValueChanged"/>
+                    </WrapPanel>
                 </WrapPanel>
-            </WrapPanel>
-            <TextBlock Text="Palettes" FontSize="16" Margin="10"/>
-            <ListBox Margin="10">
-                <ListBoxItem>
-                        <TextBlock Text="Example"/>
-                </ListBoxItem>
-            </ListBox>
+            </Grid>
             <TextBlock Text="Rotations" FontSize="16" Margin="10"/>
             <StackPanel>
                 <WrapPanel Margin="5,5">
@@ -120,6 +126,7 @@
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>
                 </ItemsRepeater>
+                <Button Content="Remove Last Rotation" Click="RemoveRotation_OnClick"/>
             </StackPanel>
             <StackPanel>
                 <Grid ColumnDefinitions="*,4,*">
@@ -130,7 +137,7 @@
                     <GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns"/>
                     <StackPanel Grid.Column="2">
                         <TextBlock HorizontalAlignment="Center" Text="Image Preview"  FontSize="16" Margin="10,5"/>
-                        <Image Name="ImgSectorPreview" Height="384" Width="280" Source="{Binding TestImage}"/>
+                        <Image Stretch="Uniform" Name="ImgPreview" Source="{Binding TestImage}"/>
                     </StackPanel>
                 </Grid>
             </StackPanel>
