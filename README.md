@@ -30,3 +30,9 @@ Small video showing the preview of a selected sector as a palette.
 
 https://github.com/ogarvey/OGCd-iExplorer/assets/994386/396d6bbb-fd9e-4411-9f06-ea9247d31ec2
 
+## Palette Rotation example
+
+Small video showing a rotating palette with image preview
+
+https://github.com/ogarvey/OGCd-iExplorer/assets/994386/6f9e97da-1ffb-4eed-b6bb-006344a10d4d
+
