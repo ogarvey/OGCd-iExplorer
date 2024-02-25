@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using OGCdiExplorer.Models;
@@ -210,7 +211,7 @@ public class PaletteManagementViewModel : PageViewModel
                 }
             }
             var paletteBitmap = ColorHelper.CreateLabelledPalette(Palette);
-
+            
             var bitmapdata = paletteBitmap.LockBits(new Rectangle(0, 0, paletteBitmap.Width, paletteBitmap.Height),
                 ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
             Bitmap bitmap1 = new Bitmap(Avalonia.Platform.PixelFormat.Bgra8888, Avalonia.Platform.AlphaFormat.Premul,
@@ -226,7 +227,92 @@ public class PaletteManagementViewModel : PageViewModel
             {
                 ParseImage();
             }
-            await Task.Delay(500);
+            await Task.Delay(100);
         }
+    }
+
+    public void ExportImageWithRotations(string path)
+    {
+        var rotations = PaletteRotations;
+        var repeat = false;
+        var paletteData = PaletteData;
+        var paletteOffset = PaletteOffset;
+        var paletteLength = PaletteLength;
+        var rotationCount = RotationCount;
+
+        if (paletteData.Length == 0 || paletteData.Length < paletteOffset || paletteLength == 0)
+        {
+            return;
+        }
+
+        if (paletteData.Length < paletteOffset + paletteLength)
+        {
+            paletteLength = paletteData.Length - paletteOffset;
+            if (paletteLength <= 0)
+            {
+                return;
+            }
+
+            PaletteLength = paletteLength;
+        }
+
+        switch (ImageService.Instance.PaletteType)
+        {
+            case CdiPaletteType.RGB:
+                Palette = ColorHelper.ConvertBytesToRGB(paletteData.Skip(paletteOffset).Take(paletteLength)
+                    .ToArray());
+                break;
+            case CdiPaletteType.Indexed:
+                Palette = ColorHelper.ReadPalette(paletteData.Skip(paletteOffset).Take(paletteLength).ToArray());
+                break;
+            case CdiPaletteType.ClutBanks:
+                Palette = ColorHelper.ReadClutBankPalettes(paletteData.Skip(paletteOffset).ToArray(),
+                    (byte)paletteLength);
+                break;
+        }
+
+        var images = new List<System.Drawing.Image>();
+        for (int i = 0; i < rotationCount; i++)
+        {
+            if (i + 1 == rotationCount && repeat) i = 0;
+            foreach (var rotation in rotations)
+            {
+                if (rotation.reverseRotation)
+                {
+                    ColorHelper.ReverseRotateSubset(Palette, rotation.StartIndex, rotation.EndIndex,
+                        rotation.Permutations);
+                }
+                else
+                {
+                    ColorHelper.RotateSubset(Palette, rotation.StartIndex, rotation.EndIndex,
+                        rotation.Permutations);
+                }
+            }
+
+            System.Drawing.Bitmap img = new System.Drawing.Bitmap(ImageWidth, ImageHeight);
+            if (ImageService.Instance.ImageBytes?.Length > 0)
+            {
+                switch (ImageService.Instance.VideoType)
+                {
+                    case CdiVideoType.CLUT7:
+                        img = ImageFormatHelper.GenerateClutImage(Palette, ImageService.Instance.ImageBytes, ImageWidth,
+                            ImageHeight);
+                        break;
+                    case CdiVideoType.RL7:
+                    default:
+                        img = new System.Drawing.Bitmap(ImageFormatHelper.GenerateRle7Image(Palette,
+                            ImageService.Instance.ImageBytes, ImageWidth, ImageHeight));
+                        break;
+                }
+
+                // add img to list
+                images.Add(img);
+            }
+        }
+        // set output path to the same folder as the input file
+        var outputPath = Path.Combine(Path.GetDirectoryName(path) ?? string.Empty, "output");
+        Directory.CreateDirectory(outputPath);
+        outputPath = Path.Combine(outputPath, Path.GetFileNameWithoutExtension(path)  + ".gif");
+        ImageFormatHelper.CreateGifFromImageList(images, outputPath,50, 0,null, ImageWidth, ImageHeight);
     }
 }

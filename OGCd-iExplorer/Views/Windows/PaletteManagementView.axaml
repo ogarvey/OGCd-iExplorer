@@ -28,6 +28,9 @@
                 <Panel Margin="20,5">
                     <Button Content="Load Preview Image"  Click="LoadImagePreview_OnClick" />
                 </Panel>
+                <Panel Margin="5">
+                    <Button Content="Export Gif" Click="ExportGif_OnClick"/>
+                </Panel>
             </WrapPanel>
             <StackPanel Margin="10,5">
                 <Grid ColumnDefinitions="*,4,*" RowDefinitions="*,*">

@@ -296,7 +296,7 @@ public class AnalysisViewModel : PageViewModel
 
         if (VideoType != CdiVideoType.DYUV)
         {
-            if (PaletteBytes?.Length == 0) return;
+            if (PaletteBytes is null || PaletteBytes?.Length == 0) return;
             switch (ImageService.Instance.PaletteType)
             {
                 case CdiPaletteType.RGB:

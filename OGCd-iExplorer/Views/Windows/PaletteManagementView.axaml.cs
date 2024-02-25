@@ -22,6 +22,8 @@ namespace OGCdiExplorer.Views.Windows;
 
 public partial class PaletteManagementView : Window
 {
+    private IStorageFile _imageFile;
+
     public PaletteManagementView()
     {
         InitializeComponent();
@@ -246,6 +248,7 @@ public partial class PaletteManagementView : Window
         if (files.Count >= 1)
         {
             // Open reading stream from the first file.
+            _imageFile = files[0];
             using var stream = files[0].OpenReadAsync().Result;
             using var streamReader = new BinaryReader(stream);
             // Reads all the content of file as a text.
@@ -277,5 +280,10 @@ public partial class PaletteManagementView : Window
     {
         var paletteRotations = ((PaletteManagementViewModel)DataContext).PaletteRotations;
         paletteRotations.RemoveAt(paletteRotations.Count - 1);
+    }
+
+    private void ExportGif_OnClick(object? sender, RoutedEventArgs e)
+    {
+        ((PaletteManagementViewModel)DataContext).ExportImageWithRotations(_imageFile.Path.AbsolutePath);
     }
 }

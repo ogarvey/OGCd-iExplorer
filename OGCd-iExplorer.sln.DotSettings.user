@@ -1,5 +1,6 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CDev_005CProjects_005CGaming_005CCD_002Di_005CCD_002Di_0020Image_0020Parser_005COGLibCD_002Di_005Cbin_005CDebug_005Cnet6_002E0_005COGLibCD_002Di_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CUsers_005COGCit_005CRiderProjects_005COGCd_002DiExplorer_005COGCd_002DiExplorer_005CAssets_005COGLibCD_002Di_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\OGCit\.nuget\packages\tmds.dbus.protocol\0.15.0\lib\net6.0\Tmds.DBus.Protocol.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>
