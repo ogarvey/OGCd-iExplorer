@@ -256,7 +256,7 @@ public partial class PaletteManagementView : Window
             ImageService.Instance.ImageBytes = fileContent;
         }
         
-        if (ImageService.Instance.ImageBytes.Length > 0)
+        if (ImageService.Instance?.ImageBytes?.Length > 0)
         {
             ((PaletteManagementViewModel)DataContext).ImageLoaded = true;
             ((PaletteManagementViewModel)DataContext).ParseImage();

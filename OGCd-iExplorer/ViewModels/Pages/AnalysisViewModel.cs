@@ -290,7 +290,7 @@ public class AnalysisViewModel : PageViewModel
         InitialU = ImageService.Instance.InitialU;
         InitialV = ImageService.Instance.InitialV;
         
-        if (ImageBytes?.Length == 0) return;
+        if (ImageBytes is null || ImageBytes?.Length == 0) return;
 
         var palette = new List<Color>();
 

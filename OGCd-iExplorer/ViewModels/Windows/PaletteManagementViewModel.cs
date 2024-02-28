@@ -227,7 +227,7 @@ public class PaletteManagementViewModel : PageViewModel
             {
                 ParseImage();
             }
-            await Task.Delay(100);
+            await Task.Delay(250);
         }
     }
 
