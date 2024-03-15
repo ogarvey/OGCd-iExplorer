@@ -126,7 +126,7 @@ public partial class PaletteManagementView : Window
 
     private void PopulatePaletteImage(List<Color> palette)
     {
-        var paletteBitmap = ColorHelper.CreateLabelledPalette(palette);
+        var paletteBitmap = ColorHelper.CreateLabelledPalette(palette,24);
 
         var bitmapdata = paletteBitmap.LockBits(new Rectangle(0, 0, paletteBitmap.Width, paletteBitmap.Height),
             ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
@@ -148,7 +148,10 @@ public partial class PaletteManagementView : Window
     private async void ParseSectorsPalette_OnClick(object? sender, RoutedEventArgs e)
     {
         var paletteData = ImageService.Instance.PaletteBytes;
-
+        if (paletteData is { Length: 0 })
+        {
+            return;
+        }
         var paletteOffset = ((PaletteManagementViewModel)DataContext).PaletteOffset;
         var paletteLength = ((PaletteManagementViewModel)DataContext).PaletteLength;
 
@@ -226,9 +229,10 @@ public partial class PaletteManagementView : Window
         var rotationEndIndex = ((PaletteManagementViewModel)DataContext).RotationEndIndex;
         var rotationPermutations = ((PaletteManagementViewModel)DataContext).RotationPermutations;
         var reverseRotation = ((PaletteManagementViewModel)DataContext).ReverseRotation;
+        var rotationFrameSkip = ((PaletteManagementViewModel)DataContext).RotationFrameSkip;
 
         ((PaletteManagementViewModel)DataContext).PaletteRotations.Add(new PaletteRotation(rotationStartIndex,
-            rotationEndIndex, rotationPermutations, reverseRotation));
+            rotationEndIndex, rotationPermutations, rotationFrameSkip, reverseRotation));
     }
 
     private async void LoadImagePreview_OnClick(object? sender, RoutedEventArgs e)
@@ -279,7 +283,10 @@ public partial class PaletteManagementView : Window
     private void RemoveRotation_OnClick(object? sender, RoutedEventArgs e)
     {
         var paletteRotations = ((PaletteManagementViewModel)DataContext).PaletteRotations;
-        paletteRotations.RemoveAt(paletteRotations.Count - 1);
+        if (paletteRotations.Count > 0)
+        {
+            paletteRotations.RemoveAt(paletteRotations.Count - 1);
+        }
     }
 
     private void ExportGif_OnClick(object? sender, RoutedEventArgs e)

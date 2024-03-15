@@ -75,11 +75,25 @@ public class PaletteManagementViewModel : PageViewModel
         set => this.RaiseAndSetIfChanged(ref _rotationPermutations, value);
     }
     
+    private int _rotationFps = 1;
+    public int RotationFps
+    {
+        get => _rotationFps;
+        set => this.RaiseAndSetIfChanged(ref _rotationFps, value);
+    }
+    
     private int _rotationCount = 1;
     public int RotationCount
     {
         get => _rotationCount;
         set => this.RaiseAndSetIfChanged(ref _rotationCount, value);
+    }
+    
+    private int _rotationFrameSkip = 0;
+    public int RotationFrameSkip
+    {
+        get => _rotationFrameSkip;
+        set => this.RaiseAndSetIfChanged(ref _rotationFrameSkip, value);
     }
     
     private bool _reverseRotation = false;
@@ -127,7 +141,7 @@ public class PaletteManagementViewModel : PageViewModel
     public void ParseImage()
     {
         System.Drawing.Bitmap img = new System.Drawing.Bitmap(ImageWidth, ImageHeight);
-        if (ImageService.Instance.ImageBytes?.Length > 0)
+        if (Palette is not { Count: 0 } && ImageService.Instance.ImageBytes?.Length > 0)
         {
             switch (ImageService.Instance.VideoType)
             {
@@ -199,6 +213,11 @@ public class PaletteManagementViewModel : PageViewModel
             if (i+1 == rotationCount && repeat) i = 0;
             foreach (var rotation in rotations)
             {
+                if (rotation.FrameSkip > 0 && i > 0 && i % rotation.FrameSkip != 0)
+                {
+                    continue;
+                }
+                
                 if (rotation.reverseRotation)
                 {
                     ColorHelper.ReverseRotateSubset(Palette, rotation.StartIndex, rotation.EndIndex,
@@ -210,7 +229,7 @@ public class PaletteManagementViewModel : PageViewModel
                         rotation.Permutations);
                 }
             }
-            var paletteBitmap = ColorHelper.CreateLabelledPalette(Palette);
+            var paletteBitmap = ColorHelper.CreateLabelledPalette(Palette,24);
             
             var bitmapdata = paletteBitmap.LockBits(new Rectangle(0, 0, paletteBitmap.Width, paletteBitmap.Height),
                 ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
@@ -227,7 +246,7 @@ public class PaletteManagementViewModel : PageViewModel
             {
                 ParseImage();
             }
-            await Task.Delay(250);
+            await Task.Delay(1000 / RotationFps);
         }
     }
 
@@ -255,7 +274,9 @@ public class PaletteManagementViewModel : PageViewModel
 
             PaletteLength = paletteLength;
         }
-
+        var outputPath = Path.Combine(Path.GetDirectoryName(path).Replace("%20", " ") ?? string.Empty, "output");
+        Directory.CreateDirectory(outputPath);
+        
         switch (ImageService.Instance.PaletteType)
         {
             case CdiPaletteType.RGB:
@@ -272,11 +293,16 @@ public class PaletteManagementViewModel : PageViewModel
         }
 
         var images = new List<System.Drawing.Image>();
+        var paletteImages = new List<System.Drawing.Image>();
         for (int i = 0; i < rotationCount; i++)
         {
             if (i + 1 == rotationCount && repeat) i = 0;
             foreach (var rotation in rotations)
             {
+                if (rotation.FrameSkip > 0 && i > 0 && i % rotation.FrameSkip != 0)
+                {
+                    continue;
+                }
                 if (rotation.reverseRotation)
                 {
                     ColorHelper.ReverseRotateSubset(Palette, rotation.StartIndex, rotation.EndIndex,
@@ -290,6 +316,9 @@ public class PaletteManagementViewModel : PageViewModel
             }
 
             System.Drawing.Bitmap img = new System.Drawing.Bitmap(ImageWidth, ImageHeight);
+            System.Drawing.Bitmap paletteBitmap = ColorHelper.CreateLabelledPalette(Palette,32);
+            paletteImages.Add(paletteBitmap);
+            
             if (ImageService.Instance.ImageBytes?.Length > 0)
             {
                 switch (ImageService.Instance.VideoType)
@@ -306,13 +335,15 @@ public class PaletteManagementViewModel : PageViewModel
                 }
 
                 // add img to list
+                img.Save(Path.Combine(outputPath, Path.GetFileNameWithoutExtension(path)  + $"_frame_{i}.png"));
                 images.Add(img);
             }
         }
         // set output path to the same folder as the input file
-        var outputPath = Path.Combine(Path.GetDirectoryName(path) ?? string.Empty, "output");
-        Directory.CreateDirectory(outputPath);
-        outputPath = Path.Combine(outputPath, Path.GetFileNameWithoutExtension(path)  + ".gif");
-        ImageFormatHelper.CreateGifFromImageList(images, outputPath,50, 0,null, ImageWidth, ImageHeight);
+        
+        var gifOutputPath = Path.Combine(outputPath, Path.GetFileNameWithoutExtension(path)  + ".gif");
+        var palettePath = Path.Combine(outputPath, Path.GetFileNameWithoutExtension(path)  + "_palette.gif");
+        ImageFormatHelper.CreateGifFromImageList(images, gifOutputPath,100 / RotationFps, 0,null, ImageWidth, ImageHeight);
+        ImageFormatHelper.CreateGifFromImageList(paletteImages, palettePath,100 / RotationFps, width:paletteImages[0].Width, height:paletteImages[0].Height);
     }
 }

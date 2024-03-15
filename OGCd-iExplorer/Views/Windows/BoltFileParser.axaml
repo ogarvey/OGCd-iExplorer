@@ -51,8 +51,8 @@
           </DataGrid.Styles>
           <DataGrid.Columns>
             <DataGridTextColumn Header="Offset" Binding="{Binding Offset, Mode=OneWay}" />
-            <DataGridTextColumn Header="Initial Data Length" Binding="{Binding InitialDataLength}"/>
-            <DataGridTextColumn Header="Payload Data Length" Binding="{Binding SecondaryDataLength}"/>
+            <DataGridTextColumn Header="Initial Data Length" Binding="{Binding FileCount}"/>
+            <DataGridTextColumn Header="Payload Data Length" Binding="{Binding Flags}"/>
           </DataGrid.Columns>
         </DataGrid>
       </ScrollViewer>

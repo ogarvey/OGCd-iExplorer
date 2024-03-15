@@ -146,7 +146,7 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
         {
             foreach (var sector in sectors)
             {
-                sectorsToSave.Add(sector.GetSectorData());
+                sectorsToSave.Add(sector.GetSectorData(false, CdiSectorType.Audio));
             }
             _selectedBytes = sectorsToSave.SelectMany(x => x).ToArray();
             ((AnalysisViewModel)DataContext).IsMono = sectors[0].Coding.IsMono;
@@ -185,6 +185,11 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
     }
 
     private void ApplyVideoTypeFilter(object? sender, EventArgs e)
+    {
+        ((AnalysisViewModel)DataContext).ApplySectorTypeFilters();
+    }
+    
+    private void ApplySectorTypeFilter(object? sender, EventArgs e)
     {
         ((AnalysisViewModel)DataContext).ApplySectorTypeFilters();
     }
@@ -265,6 +270,23 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
 
     private void PlayAudio_OnClick(object? sender, RoutedEventArgs e)
     {
+        if ((bool)RadAud189.IsChecked) 
+            ((AnalysisViewModel)DataContext).Frequency = 18900;
+        else 
+            ((AnalysisViewModel)DataContext).Frequency = 37800;
+        
+        if ((bool)RadAud4Bps.IsChecked) 
+            ((AnalysisViewModel)DataContext).BitsPerSample = 4;
+        else 
+            ((AnalysisViewModel)DataContext).BitsPerSample = 8;
+        
+        if ((bool)ChkMono.IsChecked) 
+            ((AnalysisViewModel)DataContext).IsMono = true;
+        else 
+            ((AnalysisViewModel)DataContext).IsMono = false;
+        
+        ((AnalysisViewModel)DataContext).PopulateAudio();
+        
         if (_stream == 0 && Bass.Init())
         {
             _stream = Bass.CreateStream(((AnalysisViewModel)DataContext).AMemoryStream.ToArray(), 0, ((AnalysisViewModel)DataContext).AMemoryStream.Length, BassFlags.Default);

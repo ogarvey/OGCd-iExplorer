@@ -127,31 +127,11 @@ public class AnalysisViewModel : PageViewModel
         set => this.RaiseAndSetIfChanged(ref _filteredItems, value);
     }
     
-    private bool _filterAudio = false;
-    public bool FilterAudio
-    {
-        get => _filterAudio;
-        set => this.RaiseAndSetIfChanged(ref _filterAudio, value);
-    }
-
-    private bool _filterVideo = false;
-    public bool FilterVideo
-    {
-        get => _filterVideo;
-        set => this.RaiseAndSetIfChanged(ref _filterVideo, value);
-    }
-
-    private bool _filterData = false;
     private CdiVideoType _videoType;
     public CdiVideoType VideoType
     {
         get => _videoType;
         set => this.RaiseAndSetIfChanged(ref _videoType, value);
-    }
-    public bool FilterData
-    {
-        get => _filterData;
-        set => this.RaiseAndSetIfChanged(ref _filterData, value);
     }
 
     private byte[]? _imageBytes;
@@ -188,6 +168,13 @@ public class AnalysisViewModel : PageViewModel
         get => _filterVideoType;
         set => this.RaiseAndSetIfChanged(ref _filterVideoType, value);
     }
+    
+    private int _filterSectorType = -1;
+    public int FilterSectorType
+    {
+        get => _filterSectorType;
+        set => this.RaiseAndSetIfChanged(ref _filterSectorType, value-1);
+    }
 
     private bool _isMono = true;
     public bool IsMono
@@ -220,9 +207,7 @@ public class AnalysisViewModel : PageViewModel
     public void ApplySectorTypeFilters()
     {
         var filtered = _sectors?.Where(item =>
-            (!FilterAudio || item.SectorTypeString == "Audio") ||
-            (!FilterVideo || item.SectorTypeString == "Video") ||
-            (!FilterData || item.SectorTypeString == "Data")).OrderBy(s => s.SectorIndex).ToList();
+            (FilterSectorType != -1 && item.GetSectorType() == (CdiSectorType)FilterSectorType) || FilterSectorType == -1).OrderBy(s => s.SectorIndex).ToList();
         
         filtered = filtered?.Where(item => (FilterChannel != -1 && item.Channel == FilterChannel) || (FilterChannel == -1)).ToList();
         filtered = filtered?.Where(item => (FilterVideoType != -1 && item.Coding.Coding == FilterVideoType) || (FilterVideoType == -1)).ToList();
@@ -263,7 +248,7 @@ public class AnalysisViewModel : PageViewModel
                 break;
         }
         
-        var paletteBitmap = ColorHelper.CreateLabelledPalette(palette);
+        var paletteBitmap = ColorHelper.CreateLabelledPalette(palette,24);
         
         var bitmapdata = paletteBitmap.LockBits(new Rectangle(0, 0, paletteBitmap.Width, paletteBitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
         Bitmap bitmap1 = new Bitmap(Avalonia.Platform.PixelFormat.Bgra8888, Avalonia.Platform.AlphaFormat.Premul,
@@ -358,9 +343,9 @@ public class AnalysisViewModel : PageViewModel
         for (int i = 0; i < AudioBytes?.Length; i += 2304)
         {
             byte[] chunk = new byte[2304];
-            Array.Copy(AudioBytes, i, chunk, 0, 2304);
             try
             {
+                Array.Copy(AudioBytes, i, chunk, 0, Math.Min(2304, AudioBytes.Length - i));
                 AudioHelper.DecodeAudioSector(chunk, left, right, BitsPerSample == 8, !IsMono);
 
             }

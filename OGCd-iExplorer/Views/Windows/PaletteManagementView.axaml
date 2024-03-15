@@ -91,6 +91,8 @@
                 <WrapPanel Margin="5,5">
                     <Label Content="Rotation Count"/>
                     <NumericUpDown Name="NumPalRotationCount" Value="{Binding RotationCount}" ValueChanged="NumericUpDown_OnValueChanged" Margin="5,0"/>
+                    <Label Margin="10,0" Content="Rotation FPS" />
+                    <NumericUpDown Name="NumPalRotationFps"  Value="{Binding RotationFps}"/>
                 </WrapPanel>
                 <WrapPanel Margin="5,5">
                     <WrapPanel>
@@ -104,6 +106,10 @@
                     <WrapPanel>
                         <Label Margin="5,0" Content="Rotation Permutations"/>
                         <NumericUpDown Name="NumPalRotationPerms"  Value="{Binding RotationPermutations}" ValueChanged="NumericUpDown_OnValueChanged"/>
+                    </WrapPanel>
+                    <WrapPanel>
+                        <Label Margin="5,0" Content="Frame Skip"/>
+                        <NumericUpDown Name="NumPalRotationFrameSkip"  Value="{Binding RotationFrameSkip}" ValueChanged="NumericUpDown_OnValueChanged"/>
                     </WrapPanel>
                     <WrapPanel>
                         <Label Content="Reverse Rotation"/>
