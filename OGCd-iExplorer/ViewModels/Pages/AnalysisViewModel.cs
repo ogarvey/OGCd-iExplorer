@@ -260,6 +260,7 @@ public class AnalysisViewModel : PageViewModel
         paletteBitmap.Dispose();
         PreviewPalette = bitmap1;
     }
+    
     public void PopulateImage()
     {
         VideoType = ImageService.Instance.VideoType;

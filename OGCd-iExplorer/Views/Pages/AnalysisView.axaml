@@ -175,21 +175,26 @@
         </TabItem>
         <TabItem Header="Image Preview">
           <StackPanel>
-            <Panel Margin="0,10">
-              <ComboBox Name="ToFormatComboBox"
-                        SelectedIndex="{Binding ToFormat}"
-                        Margin="4"
-                        DropDownClosed="ToFormatComboBox_OnDropDownClosed">
-                <ComboBox.Items>
-                  <x:String>RLE</x:String>
-                  <x:String>CLUT7</x:String>
-                  <x:String>DYUV</x:String>
-                </ComboBox.Items>
-              </ComboBox>
-              <TextBlock Text="Format" 
-                         VerticalAlignment="Center"
-                         Margin="4"/>
-            </Panel>
+            <WrapPanel>
+              <Panel Margin="0,10">
+                <ComboBox Name="ToFormatComboBox"
+                          SelectedIndex="{Binding ToFormat}"
+                          Margin="4"
+                          DropDownClosed="ToFormatComboBox_OnDropDownClosed">
+                  <ComboBox.Items>
+                    <x:String>RLE</x:String>
+                    <x:String>CLUT7</x:String>
+                    <x:String>DYUV</x:String>
+                  </ComboBox.Items>
+                </ComboBox>
+                <TextBlock Text="Format" 
+                           VerticalAlignment="Center"
+                           Margin="4"/>
+              </Panel>
+              <WrapPanel>
+                <Button Name="BtnSave" Content="Save" Click="Save_OnClick" />
+                </WrapPanel>
+            </WrapPanel>
               <WrapPanel Margin="0,10">
                 <Label Content="Initial Y"/>
                 <NumericUpDown Name="NumImgInitialY" Value="{Binding InitialY}"  ValueChanged="NumericUpDown_OnValueChanged" Margin="5,0"/>

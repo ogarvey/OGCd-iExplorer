@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Media.Imaging;
 using Avalonia.ReactiveUI;
 using ManagedBass;
 using OGCdiExplorer.Controls.HexView.Services;
@@ -12,6 +14,7 @@ using OGCdiExplorer.Services;
 using OGCdiExplorer.ViewModels.Pages;
 using OGLibCDi.Enums;
 using OGLibCDi.Models;
+using SixLabors.ImageSharp.Formats.Png;
 
 namespace OGCdiExplorer.Views.Pages;
 
@@ -209,6 +212,26 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
                 ImageService.Instance.PaletteType = CdiPaletteType.ClutBanks;
                 break;
         }
+    }
+    
+    private void Save_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var image = ((AnalysisViewModel)DataContext).PreviewImage;
+        
+        var dialog = new SaveFileDialog();
+        dialog.Filters.Add(new FileDialogFilter() { Name = "Image", Extensions = { "png" } });
+        dialog.Filters.Add(new FileDialogFilter() { Name = "All Files", Extensions = { "*" } });
+        dialog.InitialFileName = "SelectedSectors.png";
+        var result = dialog.ShowAsync((Window)TopLevel.GetTopLevel(this));
+        result.ContinueWith(task =>
+        {
+            if (task.Result != null)
+            {
+                var filename = task.Result;
+                // get the image from the image control
+                image.Save(filename);
+            }
+        });
     }
 
     private void NumericUpDown_OnValueChanged(object? sender, NumericUpDownValueChangedEventArgs e)
