@@ -20,7 +20,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public void ViewCdiFile()
     {
-        if (_previousPage is AnalysisViewModel)
+        if (_previousPage is AnalysisViewModel && _currentPage is not AnalysisViewModel)
         {
             (PreviousPage, CurrentPage) = (CurrentPage, PreviousPage);
         }

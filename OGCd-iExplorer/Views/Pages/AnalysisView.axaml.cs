@@ -37,14 +37,20 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
         
         if (sectors.Count > 0)
         {
-            if (saveAsType != "Save Selected Sectors")
+            if (saveAsType != "Save Selected Sectors" && saveAsType != "Save Raw")
             {
                 var sectorType = (CdiSectorType)Enum.Parse(typeof(CdiSectorType), saveAsType);
                 foreach (var sector in sectors)
                 {
                     sectorsToSave.Add(sector.GetSectorData(false, sectorType));
                 }
-                _selectedBytes = sectorsToSave.SelectMany(x => x).ToArray();
+            }
+            else if (saveAsType == "Save Raw")
+            {
+                foreach (var sector in sectors)
+                {
+                    sectorsToSave.Add(sector.GetSectorData(true));
+                }
             }
             else
             {
@@ -52,10 +58,10 @@ public partial class AnalysisView : ReactiveUserControl<AnalysisViewModel>
                 {
                     sectorsToSave.Add(sector.GetSectorData());
                 }
-                _selectedBytes = sectorsToSave.SelectMany(x => x).ToArray();
             }
                 
         }
+        _selectedBytes = sectorsToSave.SelectMany(x => x).ToArray();
         var file = ((AnalysisViewModel)DataContext).SelectedCdiFile.FilePath;
         var sectorInfo = SectorList.SelectedItems[0] as CdiSector;
         var dataType = sectorInfo.SectorTypeString;

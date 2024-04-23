@@ -203,6 +203,10 @@ public class AnalysisViewModel : PageViewModel
         get => _sectorCount;
         set => this.RaiseAndSetIfChanged(ref _sectorCount, value);
     }
+    
+    public int Clut7Count => SelectedCdiFile.VideoSectors.Count(s => s.Coding.VideoString == "CLUT7");
+    public int Rl7Count => SelectedCdiFile.VideoSectors.Count(s => s.Coding.VideoString == "RL7");
+    public int DyuvCount => SelectedCdiFile.VideoSectors.Count(s => s.Coding.VideoString == "DYUV");
 
     public void ApplySectorTypeFilters()
     {

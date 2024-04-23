@@ -101,15 +101,17 @@ public partial class PaletteManagementView : Window
         }
 
         var palette = new List<Color>();
-
+        var palBytes = paletteData.Skip(paletteOffset).Take(paletteLength)
+            .ToArray();
         switch (ImageService.Instance.PaletteType)
         {
             case CdiPaletteType.RGB:
-                palette = ColorHelper.ConvertBytesToRGB(paletteData.Skip(paletteOffset).Take(paletteLength)
-                    .ToArray());
+                ImageService.Instance.PaletteBytes = palBytes;
+                palette = ColorHelper.ConvertBytesToRGB(palBytes);
                 break;
             case CdiPaletteType.Indexed:
-                palette = ColorHelper.ReadPalette(paletteData.Skip(paletteOffset).Take(paletteLength).ToArray());
+                ImageService.Instance.PaletteBytes = palBytes;
+                palette = ColorHelper.ReadPalette(palBytes);
                 break;
             case CdiPaletteType.ClutBanks:
                 palette = ColorHelper.ReadClutBankPalettes(paletteData.Skip(paletteOffset).ToArray(),
@@ -208,18 +210,15 @@ public partial class PaletteManagementView : Window
                 break;
             case "NumImgWidth":
                 ImageService.Instance.ImageWidth = (int)e.NewValue;
-                if (ImageService.Instance?.ImageBytes?.Length > 0)
-                {
-                    ((PaletteManagementViewModel)DataContext).ParseImage();
-                }
                 break;
             case "NumImgHeight":
                 ImageService.Instance.ImageHeight = (int)e.NewValue;
-                if (ImageService.Instance?.ImageBytes?.Length > 0)
-                {
-                    ((PaletteManagementViewModel)DataContext).ParseImage();
-                }
                 break;
+        }
+        
+        if (ImageService.Instance?.ImageBytes?.Length > 0 && ImageService.Instance?.PaletteBytes?.Length > 0)
+        {
+            ((PaletteManagementViewModel)DataContext).ParseImage();
         }
     }
 
@@ -277,6 +276,11 @@ public partial class PaletteManagementView : Window
             case RadioButton {Name: "RadImgClut"}:
                 ImageService.Instance.VideoType = CdiVideoType.CLUT7;
                 break;
+        }
+        
+        if (ImageService.Instance?.ImageBytes?.Length > 0 && ImageService.Instance?.PaletteBytes?.Length > 0)
+        {
+            ((PaletteManagementViewModel)DataContext).ParseImage();
         }
     }
 

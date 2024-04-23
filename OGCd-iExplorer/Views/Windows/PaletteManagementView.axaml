@@ -54,11 +54,11 @@
                     <WrapPanel IsVisible="{Binding ImageLoaded}" Grid.Row="1" Grid.Column="2" Margin="5,0">
                         <RadioButton GroupName="ImageFormat"
                                      Content="RLE"
-                                     IsChecked="True"
                                      IsCheckedChanged="ImageFormat_OnIsCheckedChanged"
                                      Name="RadImgRgb"/>
                         <RadioButton GroupName="ImageFormat"
                                      Content="CLUT"
+                                     IsChecked="True"
                                      IsCheckedChanged="ImageFormat_OnIsCheckedChanged"
                                      Name="RadImgClut"/>
                     </WrapPanel>
