@@ -80,7 +80,10 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
-
+    
+    <ItemGroup>
+        <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.80.2" ExcludeAssets="all" />
+    </ItemGroup>
 
     <ItemGroup>
       <Reference Include="OGLibCD-i">
